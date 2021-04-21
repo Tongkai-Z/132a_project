@@ -1,3 +1,14 @@
+# HW5
+
+**Title**: Building a simple Vector Space IR System
+
+**Author**: Tongkai Zhang
+
+**Date**: Apr 21, 2021
+
+**Description**:
+Implemented an IR system with Flask and Elastcsearch, providing a command line tool to process TREC queries over four type of search heuristics. Evaluated the result with NDCG@20 metric and also implemented a UI for interactive query processing.
+
 ## System Overview
 
 ### Analyzer
@@ -6,7 +17,7 @@
 
 ### Matching and Ranking
 
-This system first matches the query with related docs using BM25 algorithm. Based on the user's choice, the first 20 results can be reranked by the word embedding algorithms.
+This system first matches the query with related docs using BM25 algorithm. Based on the user's choice, the first 20 results can be reranked by the embedding algorithms.
 
 ## Understandings of Embedding
 
@@ -28,7 +39,7 @@ python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type narrat
 python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title --vector_name sbert_vector --top_k 20
 ```
 
-**Topic **321
+**Topic 321**
 
 | Query Type         | title | description | narration |
 | ------------------ | ----- | ----------- | --------- |
@@ -37,7 +48,9 @@ python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title 
 | fasttext + default | 0.687 | 0.635       | 0.530     |
 | sbert + default    | 0.713 | 0.651       | 0.690     |
 
-**Topic **336
+Analysis: For this topic, the best performance is reached by BM25 + default analyzer on the query type title, and embedding ranking only makes little improvement for performance score on narration. We may conclude that the title is informative enough for the system to match the expected result.
+
+**Topic 336**
 
 | Query Type         | title | description | narration |
 | ------------------ | ----- | ----------- | --------- |
@@ -46,7 +59,9 @@ python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title 
 | fasttext + default | 0.471 | 0.410       | 0.370     |
 | sbert + default    | 0.680 | 0.416       | 0.394     |
 
-**Topic **341
+Analysis: The best performance is reached by BM25 + default analyzer on the query type title, and embedding ranking only makes little improvement for performance score on description. We may also conclude that the title is informative enough for the system to match the expected result.
+
+**Topic 341**
 
 | Query Type         | title | description | narration |
 | ------------------ | ----- | ----------- | --------- |
@@ -55,7 +70,9 @@ python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title 
 | fasttext + default | 0.805 | 0.619       | 0.752     |
 | sbert + default    | 0.780 | 0.688       | 0.763     |
 
-**Topic **347
+Analysis: Best performance is reached by narration based search by BM25 + customized analyzer. Thus, this topic needs more context to be translated correctly. Customized analyzer with more normalization techniques can improve the performance for this topic
+
+**Topic 347**
 
 | Query Type         | title | description | narration |
 | ------------------ | ----- | ----------- | --------- |
@@ -64,7 +81,9 @@ python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title 
 | fasttext + default | 0.397 | 0.265       | 0.282     |
 | sbert + default    | 0.339 | 0.296       | 0.364     |
 
-**Topic **350
+Analysis: Best performance is reached by narration based search by BM25 + customized analyzer. Similar conclusion to the previous topic can be drawn.
+
+**Topic 350**
 
 | Query Type         | title | description | narration |
 | ------------------ | ----- | ----------- | --------- |
@@ -72,6 +91,8 @@ python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title 
 | BM25 + custom      | 0     | 0           | 1.0       |
 | fasttext + default | 0     | 0           | 0.289     |
 | sbert + default    | 0     | 0           | 0.631     |
+
+Analysis: This topic has zero title and description NDCG score, but quite high score got by narration with BM25 + customized analyzer. So the title and description is not informative enough for the topic, whereas the narration contains most important information for this topic.
 
 ## Note
 
