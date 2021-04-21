@@ -1,1 +1,24 @@
-<!--TODO: add your html here-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {
+                background-color: rgb(236, 230, 168);
+            }
+        </style>
+        <title>Washington Post Search</title>
+    </head>
+    <body>
+    <h1>{{ doc.title }}</h1>
+    <ul>
+        <li>Author: {{doc.author}}</li>
+        <li>Date: {{doc.date}}</li>
+         <!-- show formatted text with 'safe' -->
+        <li>Text: {{doc.content | safe}}</li>
+    </ul>
+    
+    <br>
+    <p>(Use browser "back" button to return to search results)</p>
+    </body>
+    </html>

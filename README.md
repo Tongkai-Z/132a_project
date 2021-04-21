@@ -19,6 +19,7 @@ IR: mean vector is calculated both for query and document. Matching score can be
 **First Five Queries in TREC**: 321 336 341 347 350
 
 **Query Example**
+Bash file `evaluation.sh`
 
 ```
 python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title --top_k 20

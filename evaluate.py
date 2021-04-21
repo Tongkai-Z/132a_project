@@ -6,6 +6,9 @@ from elasticsearch_dsl.connections import connections
 from embedding_service.client import EmbeddingClient
 from metrics import ndcg
 
+INTERACTIVE_INDEX = "wapo_docs_50k"
+INTERACTIVE_TOP = 20
+
 
 def build_query(topic_id, query_type, customized_content):
     # load the topic as query string
@@ -23,6 +26,36 @@ def build_query(topic_id, query_type, customized_content):
             content={"query": query_string}
         )
     return q_basic
+
+
+def process_interactive_query(query_string, search_type):
+    # search_type: bm_default bm_customized ft_vector sbert_vector
+    q_basic = None
+    if search_type == "bm_customized":
+        q_basic = Match(
+            custom_content={"query": query_string}
+        )
+    else:
+        q_basic = Match(
+            content={"query": query_string}
+        )
+    response = search(INTERACTIVE_INDEX, q_basic, INTERACTIVE_TOP)
+    # embedding reranking
+    if search_type == "ft_vector" or search_type == "sbert_vector":
+        vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext"}
+        result_list = [hit.meta.id for hit in response]
+        q_match_ids = Ids(values=result_list)
+        encoder = EmbeddingClient(
+            host="localhost", embedding_type=vector_mapping[search_type])
+        query_vector = encoder.encode([query_string], pooling="mean").tolist()[
+            0
+        ]
+        q_vector = generate_script_score_query(
+            query_vector, search_type
+        )
+        q_c = (q_match_ids & q_vector)
+        response = search(INTERACTIVE_INDEX, q_c, INTERACTIVE_TOP)
+    return response
 
 
 def search(index, query, top_k):
@@ -138,11 +171,9 @@ if __name__ == "__main__":
                         args.customized_content)
     # process the BM25 ranked search
     response = search(args.index_name, query, args.top_k)
-    # print_response(response)
     # reranked by embedding
     if args.vector_name != "":
         result_list = [hit.meta.id for hit in response]
         response = embedding_reranked(result_list,
                                       args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k)
-        # print_response(response)
     print(generate_ndcg_score(args.topic_id, response))

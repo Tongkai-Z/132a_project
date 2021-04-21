@@ -17,6 +17,15 @@
     <label for="query">Query:</label>
     <input type="text" id="query" name="query" size=50>
     <input type="submit" value="Search">
+    <p>Please select text representation:</p>
+    <input type="radio" id="bm_default" name="search_type" value="bm_default" checked>
+    <label for="bm_default">BM25 + Default Analyzer</label>
+    <input type="radio" id="bm_customized" name="search_type" value="bm_customized">
+    <label for="bm_customized">BM25 + Customized Analyzer</label>
+    <input type="radio" id="ft_vector" name="search_type" value="ft_vector">
+    <label for="ft_vector">Reranked by FastText embeddings</label>
+    <input type="radio" id="sbert_vector" name="search_type" value="sbert_vector">
+    <label for="sbert_vector">Reranked by SBERT embeddings</label>
 </form>
 
 </body>
