@@ -121,11 +121,11 @@ def count(response):
     return res
 
 
-def get_tnfp(response):
+def get_fnfp(response):
     res = [0, 0]
     for hit in response:
         if hit.meta.id not in relative_docs:
-            res[0] += 1  # true negative
+            res[0] += 1  # false positive
     res[1] = len(relative_docs) - (len(response) - res[0])
     return res
 
@@ -183,4 +183,4 @@ if __name__ == "__main__":
                                       args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k)
     print(count_response.hits.total)
     print(generate_ndcg_score(args.topic_id, response))
-    print(get_tnfp(response))
+    print(get_fnfp(response))
