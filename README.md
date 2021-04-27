@@ -1,6 +1,6 @@
 # HW5
 
-**Title**: Building a simple Vector Space IR System
+**Title**: Learning Elasticsearch 
 
 **Author**: Tongkai Zhang
 
@@ -29,8 +29,9 @@ IR: mean vector is calculated both for query and document. Matching score can be
 
 **First Five Queries in TREC**: 321 336 341 347 350
 
+**Bash File** `evaluation.sh`
+
 **Query Example**
-Bash file `evaluation.sh`
 
 ```
 python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title --top_k 20
@@ -99,3 +100,5 @@ Analysis: This topic has zero title and description NDCG score, but quite high s
 cosine similarity correction directory
 
 `/Applications/anaconda3/envs/cosi132a/lib/python3.7/site-packages/elasticsearch_dsl`
+
+**Time Consumed**: 16hr
