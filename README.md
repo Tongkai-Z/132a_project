@@ -2,9 +2,9 @@
 
 **Title**: Learning Elasticsearch 
 
-**Author**: Tongkai Zhang
+**Author**: Tongkai Zhang, Shi Qiu, Bowei Sun
 
-**Date**: Apr 21, 2021
+**Date**: May 4, 2021
 
 **Description**:
 Implemented an IR system with Flask and Elastcsearch, providing a command line tool to process TREC queries over four type of search heuristics. Evaluated the result with NDCG@20 metric and also implemented a UI for interactive query processing.
@@ -102,3 +102,18 @@ cosine similarity correction directory
 `/Applications/anaconda3/envs/cosi132a/lib/python3.7/site-packages/elasticsearch_dsl`
 
 **Time Consumed**: 16hr
+
+# Add synonyms analyzer
+
+Based on HW5, we added a synonyms analyzer. The synonyms mapping is the unretrieved terms in the FN results list, such as
+release is synonyms of "effort， urges, to free, released, nearing end", other parties is synonyms of
+"Washington Post, Jeff Bezos, National Press Club, U.N. human rights experts".
+
+We generated a new index called _wapo_docs_50k_synonyms_ to test out the effect.
+
+| Query Type              | title | description | narration |
+| ------------------------| ----- | ----------- | --------- |
+| BM25 + without synonyms | 0.5233| 0.4353      | 0.6389    |
+| BM25 + with synonyms    | 0.5026| 0.6348      | 0.5871    |
+| fasttext + default      | NA    | NA          | NA        |
+| sbert + default         | NA    | NA          | NA        |
