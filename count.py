@@ -9,6 +9,8 @@ from metrics import ndcg
 INTERACTIVE_INDEX = "wapo_docs_50k"
 INTERACTIVE_TOP = 20
 relative_docs = {}
+fn = []
+fp = []
 
 
 def build_query(topic_id, query_type, customized_content):
@@ -122,11 +124,29 @@ def count(response):
 
 
 def get_fnfp(response):
+    global fn
+    global fp
+    tp_id = []
     res = [0, 0]
+    fn_relative_map = {}
     for hit in response:
         if hit.meta.id not in relative_docs:
             res[0] += 1  # false positive
+            fp.append(hit.title)
+        else:
+            tp_id.append(hit.meta.id)
     res[1] = len(relative_docs) - (len(response) - res[0])
+    print(fp)
+    # relative - tp_id
+    for id in relative_docs:
+        if id not in tp_id:
+            fn.append(relative_docs[id].title)
+            if relative_docs[id].annotation in fn_relative_map:
+                fn_relative_map[relative_docs[id].annotation] = fn_relative_map[relative_docs[id].annotation] + 1
+            else:
+                fn_relative_map[relative_docs[id].annotation] = 1
+    print(fn)
+    print(fn_relative_map)
     return res
 
 
