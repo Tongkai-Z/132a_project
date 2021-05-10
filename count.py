@@ -33,7 +33,6 @@ def build_query(topic_id, query_type, customized_content):
 
 def build_count_query(topic_id):
     query_string = topic_id + "-"
-    print(query_string)
     q_basic = Match(
         annotation={"query": query_string}
     )
@@ -123,7 +122,7 @@ def count(response):
     return res
 
 
-def get_fnfp(response):
+def get_fnfp(response, show_fpfn):
     global fn
     global fp
     tp_id = []
@@ -136,8 +135,8 @@ def get_fnfp(response):
         else:
             tp_id.append(hit.meta.id)
     res[1] = len(relative_docs) - (len(response) - res[0])
-    print(fp)
     # relative - tp_id
+    # check the relative score of the false negative docs
     for id in relative_docs:
         if id not in tp_id:
             fn.append(relative_docs[id].title)
@@ -145,8 +144,10 @@ def get_fnfp(response):
                 fn_relative_map[relative_docs[id].annotation] = fn_relative_map[relative_docs[id].annotation] + 1
             else:
                 fn_relative_map[relative_docs[id].annotation] = 1
-    print(fn)
-    print(fn_relative_map)
+    if show_fpfn:
+        print("false positive:\n", fp)
+        print("false negative:\n", fn)
+        print("false negative relevance: ", fn_relative_map)
     return res
 
 
@@ -180,12 +181,19 @@ if __name__ == "__main__":
         help="embedding vector name if used"
     )
     parser.add_argument(
+        "-fpfn",
+        dest='show_fpfn',
+        action='store_true',
+        help="show the title of fpfn"
+    )
+    parser.add_argument(
         "-u",
         dest='customized_content',
         action='store_true',
         help="use customized_content"
     )
     parser.set_defaults(customized_content=False)
+    parser.set_defaults(show_fpfn=False)
     args = parser.parse_args()
     # build the query
     query = build_query(args.topic_id, args.query_type,
@@ -194,13 +202,16 @@ if __name__ == "__main__":
     # 356 is set explicitly for topic 815
     count_response = search(args.index_name, count_query, 356)
     count_rel = count(count_response)
-    print(count_rel)
+    # print(count_rel)
     response = search(args.index_name, query, args.top_k)
     # reranked by embedding
     if args.vector_name != "":
         result_list = [hit.meta.id for hit in response]
         response = embedding_reranked(result_list,
                                       args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k)
-    print(count_response.hits.total)
-    print(generate_ndcg_score(args.topic_id, response))
-    print(get_fnfp(response))
+    # print(count_response.hits.total)
+    print("ndcg_score: ", round(generate_ndcg_score(args.topic_id, response), 3))
+    res = get_fnfp(response, args.show_fpfn)
+    print("false positve:", res[0])
+    print("false negative:", res[1])
+    print("precision:", round((args.top_k - res[0])/args.top_k, 3))

@@ -13,6 +13,19 @@ Check the slides for more detailed discussion: https://docs.google.com/presentat
 
 Github Repo: https://github.com/Tongkai-Z/132a_project
 
+## How to run
+
+```
+conda activate cosi132a
+python -m embedding_service.server --embedding fasttext  --model pa5_data/wiki-news-300d-1M-subword.vec
+python -m embedding_service.server --embedding sbert  --model msmarco-distilbert-base-v3
+python count.py --index_name wapo_docs_50k --topic_id 815 --query_type narration --vector_name sbert_vector --top_k 20
+
+# script
+sh evaluation.sh
+
+```
+
 ## False Negative & False Positive
 
 **False Negative**: not retrieved, relevant
