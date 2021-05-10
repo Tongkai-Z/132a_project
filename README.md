@@ -61,6 +61,7 @@ We suspect the reason is that Bert is not as effective as expected. Also there a
 
 1. pre-trained model
 2. Synonymous
+3. Retrieve based on fasttext/sbert embedding's only, Not using BM25 as baseline
 
 ### Suggestions
 
