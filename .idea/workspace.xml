@@ -2,10 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ddade88a-8fe8-458b-b88d-56968313398c" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/eval_res/facebook" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/eval_res/result_np" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/eval_res/wordnet_syn" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pa5_data/topics2018_r.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/query.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/es_service/doc_template.py" beforeDir="false" afterPath="$PROJECT_DIR$/es_service/doc_template.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/count.py" beforeDir="false" afterPath="$PROJECT_DIR$/count.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/evaluation.sh" beforeDir="false" afterPath="$PROJECT_DIR$/evaluation.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,5 +76,23 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1419" height="206" key="GridCell.Tab.0.bottom" timestamp="1620641818013">
+      <screen x="0" y="23" width="1440" height="806" />
+    </state>
+    <state width="1419" height="206" key="GridCell.Tab.0.bottom/0.23.1440.806@0.23.1440.806" timestamp="1620641818013" />
+    <state width="1419" height="206" key="GridCell.Tab.0.center" timestamp="1620641818012">
+      <screen x="0" y="23" width="1440" height="806" />
+    </state>
+    <state width="1419" height="206" key="GridCell.Tab.0.center/0.23.1440.806@0.23.1440.806" timestamp="1620641818012" />
+    <state width="1419" height="206" key="GridCell.Tab.0.left" timestamp="1620641818011">
+      <screen x="0" y="23" width="1440" height="806" />
+    </state>
+    <state width="1419" height="206" key="GridCell.Tab.0.left/0.23.1440.806@0.23.1440.806" timestamp="1620641818011" />
+    <state width="1419" height="206" key="GridCell.Tab.0.right" timestamp="1620641818012">
+      <screen x="0" y="23" width="1440" height="806" />
+    </state>
+    <state width="1419" height="206" key="GridCell.Tab.0.right/0.23.1440.806@0.23.1440.806" timestamp="1620641818012" />
   </component>
 </project>

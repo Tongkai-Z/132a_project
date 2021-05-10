@@ -1,109 +1,93 @@
-# HW5
+# Final Project
 
-**Title**: Learning Elasticsearch 
+**Due**: May 13
+Team Shi Qiu, Bowen Sun, Tongkai Zhang:
+Topic TREC #815
+What we did so far:
 
 **Author**: Tongkai Zhang, Shi Qiu, Bowei Sun
 
 **Date**: May 4, 2021
+1. Identify False Negatives and False Positive from baseline results
+2. Experiment with different pre-trained models
+3. Some False negative results seems neglecting synonyms key terms in query, then we add a synonyms analyzer to solve this
 
-**Description**:
-Implemented an IR system with Flask and Elastcsearch, providing a command line tool to process TREC queries over four type of search heuristics. Evaluated the result with NDCG@20 metric and also implemented a UI for interactive query processing.
+Check the slides for more detailed discussion: https://docs.google.com/presentation/d/1YS2NF3w-5RA0q4JEAYsOcV1N4q9_0468drCeWSHY-ns/edit#slide=id.gd766f1b364_0_2
 
-## System Overview
+Github Repo: https://github.com/Tongkai-Z/132a_project
 
-### Analyzer
-
-**Customized**: snowball stemmer, asciifolding token filter, lowercase filter, standard tokenizer
-
-### Matching and Ranking
-
-This system first matches the query with related docs using BM25 algorithm. Based on the user's choice, the first 20 results can be reranked by the embedding algorithms.
-
-## Understandings of Embedding
-
-main idea: turn the term to a dense real value vector, which can be learned from a given corpus. The vector contains the context of the word, so similar word would have higher score in cosine similarity.
-
-IR: mean vector is calculated both for query and document. Matching score can be calculated from these two mean vectors
-
-## NDCG Score and Result
-
-**First Five Queries in TREC**: 321 336 341 347 350
-
-**Bash File** `evaluation.sh`
-
-**Query Example**
+## How to run
 
 ```
-python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title --top_k 20
-python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title -u --top_k 20
-python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type narration --vector_name sbert_vector --top_k 20
-python evaluate.py --index_name wapo_docs_50k --topic_id 321 --query_type title --vector_name sbert_vector --top_k 20
+conda activate cosi132a
+python -m embedding_service.server --embedding fasttext  --model pa5_data/wiki-news-300d-1M-subword.vec
+python -m embedding_service.server --embedding sbert  --model msmarco-distilbert-base-v3
+python count.py --index_name wapo_docs_50k --topic_id 815 --query_type narration --vector_name sbert_vector --top_k 20
+
+# script
+sh evaluation.sh
+
 ```
 
-**Topic 321**
+## False Negative & False Positive
 
-| Query Type         | title | description | narration |
-| ------------------ | ----- | ----------- | --------- |
-| BM25 + default     | 0.813 | 0.684       | 0.626     |
-| BM25 + custom      | 0.631 | 0.780       | 0.584     |
-| fasttext + default | 0.687 | 0.635       | 0.530     |
-| sbert + default    | 0.713 | 0.651       | 0.690     |
+**False Negative**: not retrieved, relevant
+**False Positive**: retrieved, irrelevant
 
-Analysis: For this topic, the best performance is reached by BM25 + default analyzer on the query type title, and embedding ranking only makes little improvement for performance score on narration. We may conclude that the title is informative enough for the system to match the expected result.
+### Issue1: FN, relevant lvl 2 docs are almost not retrieved
 
-**Topic 336**
+there are 20 level-2 docs in total, but 19 of them are in FN of top_20 retrieved documents
 
-| Query Type         | title | description | narration |
-| ------------------ | ----- | ----------- | --------- |
-| BM25 + default     | 0.823 | 0.358       | 0.430     |
-| BM25 + custom      | 0.845 | 0.431       | 0.381     |
-| fasttext + default | 0.471 | 0.410       | 0.370     |
-| sbert + default    | 0.680 | 0.416       | 0.394     |
+**Solution**: - Synonymous
 
-Analysis: The best performance is reached by BM25 + default analyzer on the query type title, and embedding ranking only makes little improvement for performance score on description. We may also conclude that the title is informative enough for the system to match the expected result.
+```
+To improve FP and FN results:
+	1.	FP: The documents contains more keywords,  but not highly related to the description retrieved. (Trial of Post reporter detained in Iran may be nearing end) Mentions about trails, but about serving and releasing from the prision. ( State Department urges Iran to release Washington Post correspondent) mentions the actions from US government, but also not including the effort to release the reporter neigher him serving in prison.
 
-**Topic 341**
+	2.	FN: Some documents that are highly related, not but containing the keywords are not selected. ( State Department urges Iran to release Washington Post correspondent) This document is about the effort from US Government, but the word “urges”, “free” is not mentioned in description, thus not selected.
 
-| Query Type         | title | description | narration |
-| ------------------ | ----- | ----------- | --------- |
-| BM25 + default     | 0.762 | 0.593       | 0.900     |
-| BM25 + custom      | 0.806 | 0.816       | 0.947     |
-| fasttext + default | 0.805 | 0.619       | 0.752     |
-| sbert + default    | 0.780 | 0.688       | 0.763     |
 
-Analysis: Best performance is reached by narration based search by BM25 + customized analyzer. Thus, this topic needs more context to be translated correctly. Customized analyzer with more normalization techniques can improve the performance for this topic
+We suspect the reason is that Bert is not as effective as expected. Also there are some terms in FN documents, such as “urges”, “to free” are not considered as relative terms, The possible solution is to apply some synonymous in the analyzer. Also fine tune bert with highly relevant documents would probably improve the effectiveness of Bert.
+```
 
-**Topic 347**
+## Possible Approach
 
-| Query Type         | title | description | narration |
-| ------------------ | ----- | ----------- | --------- |
-| BM25 + default     | 0.350 | 0.468       | 0.323     |
-| BM25 + custom      | 0.235 | 0.432       | 0.503     |
-| fasttext + default | 0.397 | 0.265       | 0.282     |
-| sbert + default    | 0.339 | 0.296       | 0.364     |
+- [ ] Try different pre-trained bert. (Bert on larger corpus, different selected documents) Need to find resources online and integrate into Elasticsearch
+- [ ] Train bert with our selected, relevant documents. Need to implement our own code to build and train bert. How to intergrate the tuned bert to elasticsearch.
+- [ ] Test out different keyword searches. 1)including more relevant keywords 2) conjunction of two piece of queries.
+- [ ] Adopt the baseline metric from other team, such as MCDA, TREC#803
 
-Analysis: Best performance is reached by narration based search by BM25 + customized analyzer. Similar conclusion to the previous topic can be drawn.
+## Progress
 
-**Topic 350**
+1. pre-trained model
+2. Synonymous
 
-| Query Type         | title | description | narration |
-| ------------------ | ----- | ----------- | --------- |
-| BM25 + default     | 0     | 0           | 0.356     |
-| BM25 + custom      | 0     | 0           | 1.0       |
-| fasttext + default | 0     | 0           | 0.289     |
-| sbert + default    | 0     | 0           | 0.631     |
+### Suggestions
 
-Analysis: This topic has zero title and description NDCG score, but quite high score got by narration with BM25 + customized analyzer. So the title and description is not informative enough for the topic, whereas the narration contains most important information for this topic.
+#### Queries
 
-## Note
+- customize the query
+  - https://docs.google.com/presentation/d/1eVcXcPLKcIOfszMSfrNH1oh2MsoYPMU1QTTepGkn1SY/edit#slide=id.gd4bdbdc458_0_11
+- query expansion[Google 幻灯片 - 用于在线创建和编辑演示文稿，完全免费。](https://docs.google.com/presentation/d/1VaO-38JedXqk2YUYiaY8dkgzBJqIDw0xvWaypY8wAX4/edit#slide=id.gd4a5a6b322_0_0)
+- devide and combine query vectors
+- Remove redundant words in narrations and descriptions
+- Extract meaningful words, embedding them, Use IDF to filter synonyms
+  - [Google 幻灯片 - 用于在线创建和编辑演示文稿，完全免费。](https://docs.google.com/presentation/d/19c5Itz2Tn2ZCmPOyZHWKinaVdWd2fVbPXMWAcKl1I4A/edit#slide=id.gd55babf1e4_0_116)
 
-cosine similarity correction directory
+```
+Example: “Do college graduates have higher income? Do high-school graduates have higher unemployment?” -> [[college, graduates, high, income], [high-school, graduates, high, unemployment]]
+```
 
-`/Applications/anaconda3/envs/cosi132a/lib/python3.7/site-packages/elasticsearch_dsl`
+#### Embeddings
 
-**Time Consumed**: 16hr
+- Rank directly with Bert embeddings (no BM25)
+- creating customized document vectors e.g. doc2vec
+  - [Google 幻灯片 - 用于在线创建和编辑演示文稿，完全免费。](https://docs.google.com/presentation/d/1eVcXcPLKcIOfszMSfrNH1oh2MsoYPMU1QTTepGkn1SY/edit#slide=id.gd54c5a01c8_0_37)
+  - Removing words before training (tf-idf)
+  - Training only on relevant documents vs whole corpus
+  - Ranking from vectors directly
 
-# Add synonyms analyzer
+#### Add synonyms analyzer
 
 Based on HW5, we added a synonyms analyzer. The synonyms mapping is the unretrieved terms in the FN results list, such as
 release is synonyms of "effort， urges, to free, released, nearing end", other parties is synonyms of
@@ -111,9 +95,14 @@ release is synonyms of "effort， urges, to free, released, nearing end", other 
 
 We generated a new index called _wapo_docs_50k_synonyms_ to test out the effect.
 
+To run the new analyzer, first generate a new index with customized analyzer. Then run evaluation metrics on the new index.
+
 | Query Type              | title | description | narration |
 | ------------------------| ----- | ----------- | --------- |
 | BM25 + without synonyms | 0.5233| 0.4353      | 0.6389    |
 | BM25 + with synonyms    | 0.5026| 0.6348      | 0.5871    |
 | fasttext + default      | NA    | NA          | NA        |
 | sbert + default         | NA    | NA          | NA        |
+
+
+#### N-gram analyzer

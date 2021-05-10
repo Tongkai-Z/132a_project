@@ -1,0 +1,150 @@
+Result for np-distrilbert-base-v1
+815 title
+bm25_default
+ndcg_score:  0.523
+false negative relevance:  {'815-1': 49, '815-2': 20}
+false positve: 16
+false negative: 69
+precision: 0.2
+bm25_default+customized_query
+ndcg_score:  0.523
+false negative relevance:  {'815-1': 49, '815-2': 20}
+false positve: 16
+false negative: 69
+precision: 0.2
+bm25_c
+ndcg_score:  0.522
+false negative relevance:  {'815-1': 49, '815-2': 20}
+false positve: 16
+false negative: 69
+precision: 0.2
+bm25_c+customized_query
+ndcg_score:  0.522
+false negative relevance:  {'815-1': 49, '815-2': 20}
+false positve: 16
+false negative: 69
+precision: 0.2
+fasttext
+ndcg_score:  0.472
+false negative relevance:  {'815-1': 49, '815-2': 20}
+false positve: 16
+false negative: 69
+precision: 0.2
+fasttext+customized_query
+ndcg_score:  0.472
+false negative relevance:  {'815-1': 49, '815-2': 20}
+false positve: 16
+false negative: 69
+precision: 0.2
+sbert
+ndcg_score:  0.572
+false negative relevance:  {'815-1': 49, '815-2': 20}
+false positve: 16
+false negative: 69
+precision: 0.2
+sbert+customized_query
+ndcg_score:  0.572
+false negative relevance:  {'815-1': 49, '815-2': 20}
+false positve: 16
+false negative: 69
+precision: 0.2
+
+815 description
+bm25_default
+ndcg_score:  0.435
+false negative relevance:  {'815-1': 50, '815-2': 20}
+false positve: 17
+false negative: 70
+precision: 0.15
+bm25_default+customized_query
+ndcg_score:  0.435
+false negative relevance:  {'815-1': 50, '815-2': 20}
+false positve: 17
+false negative: 70
+precision: 0.15
+bm25_c
+ndcg_score:  0.507
+false negative relevance:  {'815-1': 49, '815-2': 19}
+false positve: 15
+false negative: 68
+precision: 0.25
+bm25_c+customized_query
+ndcg_score:  0.507
+false negative relevance:  {'815-1': 49, '815-2': 19}
+false positve: 15
+false negative: 68
+precision: 0.25
+fasttext
+ndcg_score:  0.532
+false negative relevance:  {'815-1': 50, '815-2': 20}
+false positve: 17
+false negative: 70
+precision: 0.15
+fasttext+customized_query
+ndcg_score:  0.532
+false negative relevance:  {'815-1': 50, '815-2': 20}
+false positve: 17
+false negative: 70
+precision: 0.15
+sbert
+ndcg_score:  0.609
+false negative relevance:  {'815-1': 50, '815-2': 20}
+false positve: 17
+false negative: 70
+precision: 0.15
+sbert+customized_query
+ndcg_score:  0.609
+false negative relevance:  {'815-1': 50, '815-2': 20}
+false positve: 17
+false negative: 70
+precision: 0.15
+
+815 narration
+bm25_default
+ndcg_score:  0.64
+false negative relevance:  {'815-1': 49, '815-2': 19}
+false positve: 15
+false negative: 68
+precision: 0.25
+bm25_default+customized_query
+ndcg_score:  0.64
+false negative relevance:  {'815-1': 49, '815-2': 19}
+false positve: 15
+false negative: 68
+precision: 0.25
+bm25_c
+ndcg_score:  0.458
+false negative relevance:  {'815-1': 48, '815-2': 18}
+false positve: 13
+false negative: 66
+precision: 0.35
+bm25_c+customized_query
+ndcg_score:  0.458
+false negative relevance:  {'815-1': 48, '815-2': 18}
+false positve: 13
+false negative: 66
+precision: 0.35
+fasttext
+ndcg_score:  0.412
+false negative relevance:  {'815-1': 49, '815-2': 19}
+false positve: 15
+false negative: 68
+precision: 0.25
+fasttext+customized_query
+ndcg_score:  0.412
+false negative relevance:  {'815-1': 49, '815-2': 19}
+false positve: 15
+false negative: 68
+precision: 0.25
+sbert
+ndcg_score:  0.408
+false negative relevance:  {'815-1': 49, '815-2': 19}
+false positve: 15
+false negative: 68
+precision: 0.25
+sbert+customized_query
+ndcg_score:  0.408
+false negative relevance:  {'815-1': 49, '815-2': 19}
+false positve: 15
+false negative: 68
+precision: 0.25
