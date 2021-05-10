@@ -20,15 +20,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddade88a-8fe8-458b-b88d-56968313398c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/pa5_data/synonyms.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/get_relevant.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/count.py" beforeDir="false" afterPath="$PROJECT_DIR$/count.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/es_service/doc_template.py" beforeDir="false" afterPath="$PROJECT_DIR$/es_service/doc_template.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
