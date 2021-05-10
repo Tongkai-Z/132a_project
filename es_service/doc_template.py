@@ -18,8 +18,11 @@ custom_analyzer = analyzer(
 # Add synonyms analyzer
 
 # Synonyms mapping
-my_synonyms = ["effort, urges, to free, released, nearing end, immediate release",
-               "Washington Post, Jeff Bezos, National Press Club, U.N. human rights experts, U.N., Lawyer"]
+my_synonyms = ["effort, urges, to free, released, free, release, immediate release, will release, frees, departure of Americans from Iran",
+               "Washington Post journalist, Jason Rezaian",
+               "Obama, U.N. rights committee, the State Department",
+               "soon, at last",
+               "detention, held, detained, arrest"]
 synonyms_token_filter = token_filter(
   'synonyms_token_filter',     # Any name for the filter
   'synonym',                   # Synonym filter type

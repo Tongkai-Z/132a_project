@@ -152,6 +152,7 @@ def get_fnfp(response, show_fpfn):
     for id in relative_docs:
         if id not in tp_id:
             fn.append(relative_docs[id].title)
+            # fn.append(relative_docs[id].doc_id)
             if relative_docs[id].annotation in fn_relative_map:
                 fn_relative_map[relative_docs[id].annotation] = fn_relative_map[relative_docs[id].annotation] + 1
             else:
@@ -196,6 +197,7 @@ if __name__ == "__main__":
         "-fpfn",
         dest='show_fpfn',
         action='store_true',
+        default=False,
         help="show the title of fpfn"
     )
     parser.add_argument(
@@ -211,7 +213,7 @@ if __name__ == "__main__":
         help="use customized_query"
     )
     parser.set_defaults(customized_content=False)
-    parser.set_defaults(show_fpfn=False)
+    # parser.set_defaults(show_fpfn=False)
     parser.set_defaults(customized_query=False)
     args = parser.parse_args()
     # build the query
@@ -229,6 +231,10 @@ if __name__ == "__main__":
         response = embedding_reranked(result_list,
                                       args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k, args.customized_query)
     # print(count_response.hits.total)
+    if args.show_fpfn:
+        print("Retrieved relevance: ")
+        for hit in response:
+            print(hit.title + " : " + hit.annotation)
     print("ndcg_score: ", round(generate_ndcg_score(args.topic_id, response), 3))
     res = get_fnfp(response, args.show_fpfn)
     print("false positve:", res[0])
