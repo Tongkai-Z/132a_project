@@ -158,7 +158,7 @@ def get_fnfp(response, show_fpfn):
             else:
                 fn_relative_map[relative_docs[id].annotation] = 1
     if show_fpfn:
-        # print("false positive:\n", fp)
+        print("false positive:\n", fp)
         print("false negative:\n", fn)
         print("false negative relevance: ", fn_relative_map)
     return res
