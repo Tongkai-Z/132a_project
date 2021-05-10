@@ -24,8 +24,16 @@ python -m embedding_service.server --embedding fasttext  --model pa5_data/wiki-n
 python -m embedding_service.server --embedding sbert  --model msmarco-distilbert-base-v3
 python count.py --index_name wapo_docs_50k --topic_id 815 --query_type narration --vector_name sbert_vector --top_k 20
 
+# Run synonyms analyzer
+1. Build new index
+python load_es_index.py --index_name wapo_docs_50k_synonyms --wapo_path pa5_data/subset_wapo_50k_sbert_ft_filtered.jl
+2. Run evaluation based on new index
+python count.py --index_name wapo_docs_50k_synonyms --topic_id 815 --query_type description --vector_name sbert_vector --top_k 20 -u
+
 # script
 sh evaluation.sh
+
+
 
 ```
 
