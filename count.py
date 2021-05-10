@@ -13,12 +13,14 @@ fn = []
 fp = []
 
 
-def build_query(topic_id, query_type, customized_content):
+def build_query(topic_id, query_type, customized_content, customized_query):
     # load the topic as query string
     # 0:title, 1:description 2:narratives
     type_mapping = {"title": 0, "description": 1, "narration": 2}
     query_string = parse_wapo_topics(
         "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
+    if customized_query:
+        query_string = customize_query(query_string)
     q_basic = None
     if customized_content:
         q_basic = Match(
@@ -54,17 +56,19 @@ def print_response(response):
         )
 
 
-def embedding_reranked(result_list, index_name, vector_name, topic_id, query_type, top_k):
+def embedding_reranked(result_list, index_name, vector_name, topic_id, query_type, top_k, customized_query):
     query = build_embedding_query(
-        result_list, vector_name, topic_id, query_type)
+        result_list, vector_name, topic_id, query_type, customized_query)
     return search(index_name, query, top_k)
 
 
-def build_embedding_query(result_list, vector_name, topic_id, query_type):
+def build_embedding_query(result_list, vector_name, topic_id, query_type, customized_query):
     type_mapping = {"title": 0, "description": 1, "narration": 2}
     vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext"}
     query_string = parse_wapo_topics(
         "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
+    if customized_query:
+        query_string = customize_query(query_string)
     q_match_ids = Ids(values=result_list)
     encoder = EmbeddingClient(
         host="localhost", embedding_type=vector_mapping[vector_name])
@@ -76,6 +80,13 @@ def build_embedding_query(result_list, vector_name, topic_id, query_type):
     )
     q_c = (q_match_ids & q_vector)
     return q_c
+
+
+def customize_query(query):
+    """
+        this function experiments the query optimization methods
+    """
+    return query
 
 
 def generate_script_score_query(query_vector, vector_name):
@@ -145,8 +156,8 @@ def get_fnfp(response, show_fpfn):
             else:
                 fn_relative_map[relative_docs[id].annotation] = 1
     if show_fpfn:
-        print("false positive:\n", fp)
-        print("false negative:\n", fn)
+        # print("false positive:\n", fp)
+        # print("false negative:\n", fn)
         print("false negative relevance: ", fn_relative_map)
     return res
 
@@ -192,12 +203,19 @@ if __name__ == "__main__":
         action='store_true',
         help="use customized_content"
     )
+    parser.add_argument(
+        "-q",
+        dest='customized_query',
+        action='store_true',
+        help="use customized_query"
+    )
     parser.set_defaults(customized_content=False)
     parser.set_defaults(show_fpfn=False)
+    parser.set_defaults(customized_query=False)
     args = parser.parse_args()
     # build the query
     query = build_query(args.topic_id, args.query_type,
-                        args.customized_content)
+                        args.customized_content, args.customized_query)
     count_query = build_count_query(args.topic_id)
     # 356 is set explicitly for topic 815
     count_response = search(args.index_name, count_query, 356)
@@ -208,7 +226,7 @@ if __name__ == "__main__":
     if args.vector_name != "":
         result_list = [hit.meta.id for hit in response]
         response = embedding_reranked(result_list,
-                                      args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k)
+                                      args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k, args.customized_query)
     # print(count_response.hits.total)
     print("ndcg_score: ", round(generate_ndcg_score(args.topic_id, response), 3))
     res = get_fnfp(response, args.show_fpfn)
