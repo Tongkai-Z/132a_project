@@ -15,6 +15,19 @@ custom_analyzer = analyzer(
     filter=["asciifolding", "snowball", "lowercase"],
 )
 
+# Add synonyms analyzer
+
+# Synonyms mapping
+my_synonyms = ["effort, urges, to free, released, nearing end, immediate release",
+               "Washington Post, Jeff Bezos, National Press Club, U.N. human rights experts, U.N., Lawyer"]
+synonyms_token_filter = token_filter(
+  'synonyms_token_filter',     # Any name for the filter
+  'synonym',                   # Synonym filter type
+  synonyms=my_synonyms       # Synonyms mapping will be inlined
+)
+
+synonyms_analyzer = analyzer("synonyms_analzyer", tokenizer="standard", filter=["lowercase", synonyms_token_filter])
+
 
 class BaseDoc(Document):
     """
@@ -32,7 +45,7 @@ class BaseDoc(Document):
         analyzer="standard"
     )  # we can also set the standard analyzer explicitly
     custom_content = Text(
-        analyzer=custom_analyzer
+        analyzer=synonyms_analyzer
     )
     date = Date(
         format="yyyy/MM/dd"

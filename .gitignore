@@ -1,2 +1,6 @@
 *.jl
 *.vec
+
+.DS_Store
+.idea
+.idea/workspace.xml

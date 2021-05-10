@@ -5,6 +5,9 @@ Team Shi Qiu, Bowen Sun, Tongkai Zhang:
 Topic TREC #815
 What we did so far:
 
+**Author**: Tongkai Zhang, Shi Qiu, Bowei Sun
+
+**Date**: May 4, 2021
 1. Identify False Negatives and False Positive from baseline results
 2. Experiment with different pre-trained models
 3. Some False negative results seems neglecting synonyms key terms in query, then we add a synonyms analyzer to solve this
@@ -84,6 +87,22 @@ Example: “Do college graduates have higher income? Do high-school graduates ha
   - Training only on relevant documents vs whole corpus
   - Ranking from vectors directly
 
-#### Analyzer
+#### Add synonyms analyzer
 
-- N-gram analyzer
+Based on HW5, we added a synonyms analyzer. The synonyms mapping is the unretrieved terms in the FN results list, such as
+release is synonyms of "effort， urges, to free, released, nearing end", other parties is synonyms of
+"Washington Post, Jeff Bezos, National Press Club, U.N. human rights experts".
+
+We generated a new index called _wapo_docs_50k_synonyms_ to test out the effect.
+
+To run the new analyzer, first generate a new index with customized analyzer. Then run evaluation metrics on the new index.
+
+| Query Type              | title | description | narration |
+| ------------------------| ----- | ----------- | --------- |
+| BM25 + without synonyms | 0.5233| 0.4353      | 0.6389    |
+| BM25 + with synonyms    | 0.5026| 0.6348      | 0.5871    |
+| fasttext + default      | NA    | NA          | NA        |
+| sbert + default         | NA    | NA          | NA        |
+
+
+#### N-gram analyzer
