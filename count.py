@@ -19,7 +19,7 @@ def build_query(topic_id, query_type, customized_content, customized_query):
     # 0:title, 1:description 2:narratives
     type_mapping = {"title": 0, "description": 1, "narration": 2}
     query_string = parse_wapo_topics(
-        "pa5_data/topics2018_r.xml")[topic_id][type_mapping[query_type]]
+        "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
     if customized_query:
         query_string = customize_query(query_string)
     q_basic = None
@@ -67,7 +67,7 @@ def build_embedding_query(result_list, vector_name, topic_id, query_type, custom
     type_mapping = {"title": 0, "description": 1, "narration": 2}
     vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext"}
     query_string = parse_wapo_topics(
-        "pa5_data/topics2018_r.xml")[topic_id][type_mapping[query_type]]
+        "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
     if customized_query:
         query_string = customize_query(query_string)
     q_match_ids = Ids(values=result_list)
