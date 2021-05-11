@@ -8,6 +8,7 @@ What we did so far:
 **Author**: Tongkai Zhang, Shi Qiu, Bowei Sun
 
 **Date**: May 4, 2021
+
 1. Identify False Negatives and False Positive from baseline results
 2. Experiment with different pre-trained models
 3. Some False negative results seems neglecting synonyms key terms in query, then we add a synonyms analyzer to solve this
@@ -106,12 +107,46 @@ We generated a new index called _wapo_docs_50k_synonyms_ to test out the effect.
 
 To run the new analyzer, first generate a new index with customized analyzer. Then run evaluation metrics on the new index.
 
-| Query Type              | title | description | narration |
-| ------------------------| ----- | ----------- | --------- |
-| BM25 + without synonyms | 0.5233| 0.4353      | 0.6389    |
-| BM25 + with synonyms    | 0.5026| 0.6348      | 0.5871    |
-| fasttext + default      | NA    | NA          | NA        |
-| sbert + default         | NA    | NA          | NA        |
-
+| Query Type              | title  | description | narration |
+| ----------------------- | ------ | ----------- | --------- |
+| BM25 + without synonyms | 0.5233 | 0.4353      | 0.6389    |
+| BM25 + with synonyms    | 0.5026 | 0.6348      | 0.5871    |
+| fasttext + default      | NA     | NA          | NA        |
+| sbert + default         | NA     | NA          | NA        |
 
 #### N-gram analyzer
+
+## Query Expansion
+
+As it is analyzed in our baseline searches, the tier-2 relevant document is rarely retrieved by all methods. Based on the content of the tier-2 documents, one observation is that these document contains the exact information we need, but present using other expressions. Thus, query expansion is to broadens the query by introducing additional tokens or phrases. In our project, we use the automatic query expansion model, so that this mechanism can be applied to any queries under any topic.
+
+### Wordnet Synonyms Expansion
+
+Query is expanded based on the synonyms of each term. Basically add the synonyms to the near position of each term.
+
+Different threshold is experimented for the query. Threshold x means for each term there will be at most x synonyms added.
+
+**Example**:
+Jason Rezaian released from Iran
+
+Threshold 2:
+Jason let_go_of let_go release Iran Islamic_Republic_of_Iran Persia
+
+Threshold 3:
+Jason let_go_of let_go release relinquish Iran Islamic_Republic_of_Iran Persia
+
+**Result**
+
+Threshold 3: 
+
+(ndcg@20score/precision)
+
+| Query Type                     | Title     | Narration  | Description |
+| ------------------------------ | --------- | ---------- | ----------- |
+| bm25                           | 0.523/0.2 | 0.435/0.15 | 0.64/0.25   |
+| bm25 + qe(query expansion)     | 0.787/0.4 | 0.59/0.15  | 0.613/0.25  |
+| bm25 + synonyms_analyzer + qe  | 0.584/0.3 | 0.59/0.2   | 0.444/0.15  |
+| sbert                          | 0.627/0.2 | 0.878/0.15 | 0.612/0.25  |
+| sbert + qe                     | 0.784/0.4 | 0.342/0.15 | 0.428/0.25  |
+| sbert + synonyms_analyzer + qe | 0.803/0.3 | 0.375/0.2  | 0.364/0.15  |
+
