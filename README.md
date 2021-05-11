@@ -183,9 +183,8 @@ As is described above, query expansion thresholds can affect the search result q
 
 The result shows that the threshold ten has the highest NCDG score but with some penalty on precision. Therefore, we choose **threshold 5** in the final setting.
 
-####Improve synonyms analyzer
+#### Improve synonyms analyzer
 
-Based on the characteristics of the False Negative docs' content, we can append more synonyms to  `synonyms.txt`.
+Based on the characteristics of the False Negative docs' content, we can append more synonyms to `synonyms.txt`.
 
 (`sbert + synonyms_analyzer + query_expansion` , `title`) is improve to (0.844, 0.4)
-
