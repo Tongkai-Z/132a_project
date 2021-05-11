@@ -18,18 +18,19 @@ custom_analyzer = analyzer(
 # Add synonyms analyzer
 
 # Synonyms mapping
-my_synonyms = ["effort, urges, to free, released, free, release, immediate release, will release, frees, departure of Americans from Iran",
-               "Washington Post journalist, Jason Rezaian",
-               "Obama, U.N. rights committee, the State Department",
-               "soon, at last",
-               "detention, held, detained, arrest"]
+# my_synonyms = ["effort, urges, to free, released, free, release, immediate release, will release, frees, departure of Americans from Iran",
+#                "Washington Post journalist, Jason Rezaian",
+#                "Obama, U.N. rights committee, the State Department",
+#                "soon, at last",
+#                "detention, held, detained, arrest"]
 synonyms_token_filter = token_filter(
-  'synonyms_token_filter',     # Any name for the filter
-  'synonym',                   # Synonym filter type
-  synonyms=my_synonyms       # Synonyms mapping will be inlined
+    'synonyms_token_filter',     # Any name for the filter
+    'synonym',                   # Synonym filter type
+    synonyms_path='analysis/synonym.txt'       # Synonyms mapping will be inlined
 )
 
-synonyms_analyzer = analyzer("synonyms_analzyer", tokenizer="standard", filter=["lowercase", synonyms_token_filter])
+synonyms_analyzer = analyzer("synonyms_analzyer", tokenizer="standard", filter=[
+                             "lowercase", synonyms_token_filter])
 
 
 class BaseDoc(Document):

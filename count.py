@@ -87,7 +87,7 @@ def customize_query(query):
     """
         this function experiments the query optimization methods, query expansion
     """
-    return wordnet_query_expansion(query, 3)
+    return wordnet_query_expansion(query, 5)
 
 
 def generate_script_score_query(query_vector, vector_name):

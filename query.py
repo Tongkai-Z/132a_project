@@ -6,7 +6,6 @@ stop_words = set(stopwords.words("english"))
 
 
 def wordnet_query_expansion(query, num_synonyms):
-    query = query.replace('\n', '')
     word_tokens = word_tokenize(query)
     s = [w for w in word_tokens if not w in stop_words]
     synonyms = []
