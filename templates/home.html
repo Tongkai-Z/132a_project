@@ -7,25 +7,40 @@
             background-color: lightskyblue;
         }
     </style>
-    <title>Washington Post Search</title>
+    <title>TREC Topic Search</title>
 </head>
 <body>
 
-<h3>Washington Post Search</h3>
+<h3>TREC Topic Search</h3>
 
 <form action="{{ url_for('results') }}" name="search" method="post">
-    <label for="query">Query:</label>
-    <input type="text" id="query" name="query" size=50>
+    <label for="query">Topic_ID:</label>
+    <input type="text" id="query" name="topic_id" size=50 placeholder="{{topic_id}}" value="815">
     <input type="submit" value="Search">
-    <p>Please select text representation:</p>
-    <input type="radio" id="bm_default" name="search_type" value="bm_default" checked>
-    <label for="bm_default">BM25 + Default Analyzer</label>
-    <input type="radio" id="bm_customized" name="search_type" value="bm_customized">
-    <label for="bm_customized">BM25 + Customized Analyzer</label>
-    <input type="radio" id="ft_vector" name="search_type" value="ft_vector">
-    <label for="ft_vector">Reranked by FastText embeddings</label>
-    <input type="radio" id="sbert_vector" name="search_type" value="sbert_vector">
-    <label for="sbert_vector">Reranked by SBERT embeddings</label>
+    <p>Please select Query Expansion:</p>
+    <input type="radio" id="no" name="query_expansion" value="no" checked>
+    <label for="no">no</label>
+    <input type="radio" id="yes" name="query_expansion" value="yes">
+    <label for="yes">yes</label>
+    <p>Please select analyzer:</p>
+    <input type="radio" id="default" name="analyzer" value="default" >
+    <label for="default">Default</label>
+    <input type="radio" id="syn" name="analyzer" value="synonyms_analyzer" checked>
+    <label for="syn">Synonyms Analyzer</label>
+    <p>Please select query type:</p>
+    <input type="radio" id="title" name="query_type" value="title" checked>
+    <label for="title">Title</label>
+    <input type="radio" id="description" name="query_type" value="description">
+    <label for="description">Description</label>
+    <input type="radio" id="narration" name="query_type" value="narration">
+    <label for="narration">Narration</label>
+    <p>Please select embedding:</p>
+    <input type="radio" id="none" name="embedding_type" value="none">
+    <label for="none">None</label>
+    <input type="radio" id="ft_vector" name="embedding_type" value="ft_vector">
+    <label for="ft_vector">ft_vector</label>
+    <input type="radio" id="sbert_vector" name="embedding_type" value="sbert_vector" checked>
+    <label for="sbert_vector">sbert_vector</label>
 </form>
 
 </body>
