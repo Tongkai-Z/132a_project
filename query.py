@@ -6,26 +6,21 @@ stop_words = set(stopwords.words("english"))
 
 
 def wordnet_query_expansion(query, num_synonyms):
-    query = query.replace('\n', '')
     word_tokens = word_tokenize(query)
-    filtered_sentence = [w for w in word_tokens if not w in stop_words]
-
+    s = [w for w in word_tokens if not w in stop_words]
     synonyms = []
-
-    count = 0
-    for x in filtered_sentence:
-        for syn in wordnet.synsets(x):
+    for term in s:
+        count = 0
+        for syn in wordnet.synsets(term):
             for l in syn.lemmas():
-                if(count < num_synonyms):  # put three syn in the result
+                if(count <= num_synonyms):  # put syn in the result
                     if l.name() not in synonyms:
                         synonyms.append(l.name())
                         count += 1
-        count = 0
-
-    synonyms_string = ' '.join(synonyms)
-    return synonyms_string
+    res = ' '.join(synonyms)
+    return res
 
 
 if __name__ == "__main__":
-    wordnet_query_expansion(
-        "Washington Post journalist Jason Rezaian had served in an Iranian prison and was released, as well as those that describe efforts from the Washington Post and others to have him released.")
+    print(wordnet_query_expansion(
+        "Jason Rezaian released from Iran", 3))

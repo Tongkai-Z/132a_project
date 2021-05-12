@@ -49,6 +49,7 @@ The detailed implementation will be discussed in later sections.
 
 ### How to run
 <h3>TODO: Revise how to run code</h3>
+
 ```
 conda activate cosi132a
 python -m embedding_service.server --embedding fasttext  --model pa5_data/wiki-news-300d-1M-subword.vec
@@ -56,9 +57,11 @@ python -m embedding_service.server --embedding sbert  --model msmarco-distilbert
 python count.py --index_name wapo_docs_50k --topic_id 815 --query_type narration --vector_name sbert_vector --top_k 20
 
 # Run synonyms analyzer
-1. Build new index
+# Build new index
+# add synonym list in synonym.txt
+cp ./es_service/synonym.txt $ELASTICSEARCH/elasticsearch-7.10.2/config/analysis/
 python load_es_index.py --index_name wapo_docs_50k_synonyms --wapo_path pa5_data/subset_wapo_50k_sbert_ft_filtered.jl
-2. Run evaluation based on new index
+#  Run evaluation based on new index
 python count.py --index_name wapo_docs_50k_synonyms --topic_id 815 --query_type description --vector_name sbert_vector --top_k 20 -u
 
 # script
@@ -139,12 +142,82 @@ We generated a new index called _wapo_docs_50k_synonyms_ to test out the effect.
 
 To run the new analyzer, first generate a new index with customized analyzer. Then run evaluation metrics on the new index.
 
-| Query Type              | title | description | narration |
-| ------------------------| ----- | ----------- | --------- |
-| BM25 + without synonyms | 0.5233| 0.4353      | 0.6389    |
-| BM25 + with synonyms    | 0.5026| 0.6348      | 0.5871    |
-| fasttext + default      | NA    | NA          | NA        |
-| sbert + default         | NA    | NA          | NA        |
-
+| Query Type              | title  | description | narration |
+| ----------------------- | ------ | ----------- | --------- |
+| BM25 + without synonyms | 0.5233 | 0.4353      | 0.6389    |
+| BM25 + with synonyms    | 0.5026 | 0.6348      | 0.5871    |
+| fasttext + default      | NA     | NA          | NA        |
+| sbert + default         | NA     | NA          | NA        |
 
 #### N-gram analyzer
+
+## Query Expansion
+
+As it is analyzed in our baseline searches, the tier-2 relevant document is rarely retrieved by all methods. Based on the content of the tier-2 documents, one observation is that these document contains the exact information we need, but present using other expressions. Thus, query expansion is to broadens the query by introducing additional tokens or phrases. In our project, we use the automatic query expansion model, so that this mechanism can be applied to any queries under any topic.
+
+### Wordnet Synonyms Expansion
+
+Query is expanded based on the synonyms of each term. Basically add the synonyms to the near position of each term.
+
+Different threshold is experimented for the query. Threshold x means for each term there will be at most x synonyms added.
+
+**Example**:
+Jason Rezaian released from Iran
+
+Threshold 2:
+Jason let_go_of let_go release Iran Islamic_Republic_of_Iran Persia
+
+Threshold 3:
+Jason let_go_of let_go release relinquish Iran Islamic_Republic_of_Iran Persia
+
+**Result**
+
+**Threshold 3**:
+
+(ndcg@20score/precision)
+
+| Query Type                     | Title     | Narration  | Description |
+| ------------------------------ | --------- | ---------- | ----------- |
+| bm25                           | 0.523/0.2 | 0.435/0.15 | 0.64/0.25   |
+| bm25 + qe(query expansion)     | 0.787/0.4 | 0.59/0.15  | 0.613/0.25  |
+| bm25 + synonyms_analyzer + qe  | 0.584/0.3 | 0.59/0.2   | 0.444/0.15  |
+| sbert                          | 0.627/0.2 | 0.878/0.15 | 0.612/0.25  |
+| sbert + qe                     | 0.784/0.4 | 0.342/0.15 | 0.428/0.25  |
+| sbert + synonyms_analyzer + qe | 0.803/0.3 | 0.375/0.2  | 0.364/0.15  |
+
+**Threshold 5**:
+
+(ndcg@20score/precision)
+
+| Query Type                     | Title     | Narration  | Description |
+| ------------------------------ | --------- | ---------- | ----------- |
+| bm25                           | 0.523/0.2 | 0.435/0.15 | 0.64/0.25   |
+| bm25 + qe(query expansion)     | 0.659/0.3 | 0.468/0.15 | 0.613/0.25  |
+| bm25 + synonyms_analyzer + qe  | 0.577/0.3 | 0.367/0.15 | 0.624/0.3   |
+| sbert                          | 0.627/0.2 | 0.878/0.15 | 0.612/0.25  |
+| sbert + qe                     | 0.578/0.3 | 0.365/0.15 | 0.405/0.25  |
+| sbert + synonyms_analyzer + qe | 0.84/0.3  | 0.458/0.15 | 0.454/0.3   |
+
+The result shows that Query Expansion with Wordnet can improve the precision as well as ndcg score for some combination of query type and search type. Combined with the synonyms analyzer we found a relatively optimized pair:
+
+(`sbert + synonyms_analyzer + query_expansion` , `title`),
+
+#### Threshold
+
+As is described above, query expansion thresholds can affect the search result quite significantly. Thus, further experiments is carried out on testing different thresholds on (`sbert + synonyms_analyzer + query_expansion` , `title`)
+
+| Query Expansion Threshold | NCDG@20 | Precision |
+| ------------------------- | ------- | --------- |
+| 3                         | 0.803   | 0.3       |
+| 5                         | 0.84    | 0.3       |
+| 10                        | 0.924   | 0.25      |
+| 15                        | 0.749   | 0.2       |
+| 20                        | 0.799   | 0.15      |
+
+The result shows that the threshold ten has the highest NCDG score but with some penalty on precision. Therefore, we choose **threshold 5** in the final setting.
+
+#### Improve synonyms analyzer
+
+Based on the characteristics of the False Negative docs' content, we can append more synonyms to `synonyms.txt`.
+
+(`sbert + synonyms_analyzer + query_expansion` , `title`) is improve to (0.844, 0.4)
