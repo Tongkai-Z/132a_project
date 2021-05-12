@@ -227,9 +227,11 @@ if __name__ == "__main__":
     response = search(args.index_name, query, args.top_k)
     # reranked by embedding
     if args.vector_name != "":
-        result_list = [hit.meta.id for hit in response]
-        response = embedding_reranked(result_list,
-                                      args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k, args.customized_query)
+        # result_list = [hit.meta.id for hit in response]
+        # response = embedding_reranked(result_list,
+        #                               args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k, args.customized_query)
+        response = search(args.index_name, query, args.top_k)
+
     # print(count_response.hits.total)
     if args.show_fpfn:
         print("Retrieved relevance: ")

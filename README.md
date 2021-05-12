@@ -1,23 +1,54 @@
-# Final Project
+<!-- HEADER -->
+<p align="center">
+  <h1 align="center">COSI132 Final Project</h1>
+  <p align="center">
+    Team member: Tongkai Zhang, Shi Qiu, Bowei Sun
+    <br>
+    Topic TREC #815: Jason Rezaian released from Iran
+    <a herf="https://github.com/Tongkai-Z/132a_project">Github Repo</a>
+    <a herf="#">Presentation Slides</a>
+  </p>
 
-**Due**: May 13
-Team Shi Qiu, Bowen Sun, Tongkai Zhang:
-Topic TREC #815
-What we did so far:
+<!-- TABLE OF CONTENTS -->
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+        <a href="#project-summary">Project Summary</a>
+        <ul>
+            <li><a href="#intro">Intro</a></li>
+            <li><a href="#how-to-run">How to run</a></li>
+            <li><a href="#dependencies">Dependencies</a></li>
+        </ul>
+    </li>
+    <li><a href="#">Synonyms Analyzer</a></li>
+    <li><a href="#">Query Expansion</a></li>
+    <li><a href="#">Bert Model Selection</a></li>
+    <li><a href="#">Fine Tune on Bert</a></li>
+    <li><a href="#">Contributions</a></li>
+  </ol>
+</details>
 
-**Author**: Tongkai Zhang, Shi Qiu, Bowei Sun
+<!-- PROJECT SUMMARY -->
+# Project Summary: 
+### Intro
+* Our project topic: *#815: Jason Rezaian released from Iran*
+* Description: Find documents that discuss Washington Post journalist Jason Rezaian release from Iranian prison. 
+* Narrative: Relevant documents include those that mention that Washington Post journalist Jason Rezaian had served in an Iranian prison and was released, as well as those that describe efforts from the Washington Post and others to have him released.
 
-**Date**: May 4, 2021
+We first adopted the metric from HW5 to generate a baseline score on our topics. The baseline socre are shown as below:
+<h3>TODO: PUT RESULT TABLE HERE</h3>
 
-1. Identify False Negatives and False Positive from baseline results
-2. Experiment with different pre-trained models
-3. Some False negative results seems neglecting synonyms key terms in query, then we add a synonyms analyzer to solve this
+To identify the detailed results, we wrote some python script to identify all the false negative and false positive results.
+Based on the properties of FP/FN results, we further developed 4 techniques aiming to improve our retrieval results.
+1. Apply a synonyms analyzer to generate a new index.
+2. Apply Query Expansion
+3. Selecting different pre-trained bert models
+4. Fine tune on sbert model from HW5 (msmarcos-distilbert-base-v3)
+The detailed implementation will be discussed in later sections.
 
-Check the slides for more detailed discussion: https://docs.google.com/presentation/d/1YS2NF3w-5RA0q4JEAYsOcV1N4q9_0468drCeWSHY-ns/edit#slide=id.gd766f1b364_0_2
-
-Github Repo: https://github.com/Tongkai-Z/132a_project
-
-## How to run
+### How to run
+<h3>TODO: Revise how to run code</h3>
 
 ```
 conda activate cosi132a
@@ -39,6 +70,8 @@ sh evaluation.sh
 
 
 ```
+### Dependencies
+
 
 ## False Negative & False Positive
 
