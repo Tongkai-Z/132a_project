@@ -5,8 +5,10 @@
     Team member: Tongkai Zhang, Shi Qiu, Bowei Sun
     <br>
     Topic TREC #815: Jason Rezaian released from Iran
-    <a herf="https://github.com/Tongkai-Z/132a_project">Github Repo</a>
-    <a herf="#">Presentation Slides</a>
+    <br>
+    <a href="https://github.com/Tongkai-Z/132a_project">Github Repo</a>
+    <br>
+    <a href="#">Presentation Slides</a>
   </p>
 
 <!-- TABLE OF CONTENTS -->
@@ -21,10 +23,10 @@
             <li><a href="#dependencies">Dependencies</a></li>
         </ul>
     </li>
-    <li><a href="#">Synonyms Analyzer</a></li>
-    <li><a href="#">Query Expansion</a></li>
-    <li><a href="#">Bert Model Selection</a></li>
-    <li><a href="#">Fine Tune on Bert</a></li>
+    <li><a href="synonyms-selection">Synonyms Analyzer</a></li>
+    <li><a href="#query-expansion">Query Expansion</a></li>
+    <li><a href="#bert-model-selection">Bert Model Selection</a></li>
+    <li><a href="#fine-tune-on-bert">Fine Tune on Bert</a></li>
     <li><a href="#">Contributions</a></li>
   </ol>
 </details>
@@ -40,15 +42,32 @@ We first adopted the metric from HW5 to generate a baseline score on our topics.
 <h3>TODO: PUT RESULT TABLE HERE</h3>
 
 To identify the detailed results, we wrote some python script to identify all the false negative and false positive results.
+
+**False Negative**: not retrieved, relevant
+
+**False Positive**: retrieved, irrelevant
+```
+To improve FP and FN results:
+	1.	FP: The documents contains more keywords,  but not highly related to the description retrieved. 
+    (Trial of Post reporter detained in Iran may be nearing end) Mentions about trails, but about serving and releasing from the prision.
+    ( State Department urges Iran to release Washington Post correspondent) mentions the actions from US government, but also not including the effort to release the reporter neigher him serving in prison.
+
+	2.	FN: Some documents that are highly related, not but containing the keywords are not selected.
+    ( State Department urges Iran to release Washington Post correspondent) This document is about the effort from US Government, but the word “urges”, “free” is not mentioned in description, thus not selected.
+
+We suspect the reason is that Bert is not as effective as expected. Also there are some terms in FN documents, such as “urges”, “to free” are not considered as relative terms, The possible solution is to apply some synonymous in the analyzer. Also fine tune bert with highly relevant documents would probably improve the effectiveness of Bert.
+```
+
 Based on the properties of FP/FN results, we further developed 4 techniques aiming to improve our retrieval results.
+
 1. Apply a synonyms analyzer to generate a new index.
 2. Apply Query Expansion
-3. Selecting different pre-trained bert models
+3. Select different pre-trained bert models
 4. Fine tune on sbert model from HW5 (msmarcos-distilbert-base-v3)
 The detailed implementation will be discussed in later sections.
 
 ### How to run
-<h3>TODO: Revise how to run code</h3>
+<span style="color:red"> TODO: Revise how to run code</span>.
 
 ```
 conda activate cosi132a
@@ -71,45 +90,56 @@ sh evaluation.sh
 
 ```
 ### Dependencies
+<span style="color:red"> TODO: Add more dependencies list </span>.
+* elasticsearch_dsl
+* pytorch
+* numpy
 
 
-## False Negative & False Positive
+<!-- Synonyms Analyzer -->
+# Synonyms Analyzer
+* One problem for our baseline score is that the False Negative Rate is relatively high. 
+There are 20 level-2 docs in total, but 19 of them are in FN of top_20 retrieved documents
 
-**False Negative**: not retrieved, relevant
-**False Positive**: retrieved, irrelevant
+### Approach
+* One of our solution is to apply an synonyms analyzer. And use that analyzer to generate a new index. Our new search is then performed
+on the new index.
 
-### Issue1: FN, relevant lvl 2 docs are almost not retrieved
+The synonyms analyzer maps the unretrieved terms in the FN results list. For example,
+ "release" is synonyms of "effort， urges to free, released, nearing end", other parties is synonyms of
+"Washington Post, Jeff Bezos, National Press Club, U.N. human rights experts". 
+We generated a new index called _wapo_docs_50k_synonyms_ to test out the effect.
 
-there are 20 level-2 docs in total, but 19 of them are in FN of top_20 retrieved documents
+To run the new analyzer, first generate a new index with customized analyzer. Then run evaluation metrics on the new index.
 
-**Solution**: - Synonymous
+### Results Table
+The metrics for synonyms analyzer are listed below:
 
-```
-To improve FP and FN results:
-	1.	FP: The documents contains more keywords,  but not highly related to the description retrieved. (Trial of Post reporter detained in Iran may be nearing end) Mentions about trails, but about serving and releasing from the prision. ( State Department urges Iran to release Washington Post correspondent) mentions the actions from US government, but also not including the effort to release the reporter neigher him serving in prison.
+<span style="color:red"> TODO: update results table</span>.
 
-	2.	FN: Some documents that are highly related, not but containing the keywords are not selected. ( State Department urges Iran to release Washington Post correspondent) This document is about the effort from US Government, but the word “urges”, “free” is not mentioned in description, thus not selected.
+| Query Type              | title  | description | narration |
+| ----------------------- | ------ | ----------- | --------- |
+| BM25 + without synonyms | 0.5233 | 0.4353      | 0.6389    |
+| BM25 + with synonyms    | 0.5026 | 0.6348      | 0.5871    |
+| fasttext + default      | NA     | NA          | NA        |
+| sbert + default         | NA     | NA          | NA        |
+
+Based on the results, the NDCG score increased a little on description and remains in the same range for narration and title.
+We concluded that this method has some improvements on our retrieval system.
 
 
-We suspect the reason is that Bert is not as effective as expected. Also there are some terms in FN documents, such as “urges”, “to free” are not considered as relative terms, The possible solution is to apply some synonymous in the analyzer. Also fine tune bert with highly relevant documents would probably improve the effectiveness of Bert.
-```
+### Potential problem:
+One problem with the synonyms analyzer is that it requires the prior knowledge about description and narratives for each topic.
+Since we are manually adding synonyms mappings to the analyzer, we can hardly find a way to generalize the technique to some topics
+automatically. 
 
-## Possible Approach
+To solve the problem, we looked into the method of query expansion in later experiments.
 
-- [ ] Try different pre-trained bert. (Bert on larger corpus, different selected documents) Need to find resources online and integrate into Elasticsearch
-- [ ] Train bert with our selected, relevant documents. Need to implement our own code to build and train bert. How to intergrate the tuned bert to elasticsearch.
-- [ ] Test out different keyword searches. 1)including more relevant keywords 2) conjunction of two piece of queries.
-- [ ] Adopt the baseline metric from other team, such as MCDA, TREC#803
 
-## Progress
+<!-- QUERY EXPANSION -->
+# Query Expansion
 
-1. pre-trained model
-2. Synonymous
-3. Retrieve based on fasttext/sbert embedding's only, Not using BM25 as baseline
-
-### Suggestions
-
-#### Queries
+### Queries
 
 - customize the query
   - https://docs.google.com/presentation/d/1eVcXcPLKcIOfszMSfrNH1oh2MsoYPMU1QTTepGkn1SY/edit#slide=id.gd4bdbdc458_0_11
@@ -122,37 +152,6 @@ We suspect the reason is that Bert is not as effective as expected. Also there a
 ```
 Example: “Do college graduates have higher income? Do high-school graduates have higher unemployment?” -> [[college, graduates, high, income], [high-school, graduates, high, unemployment]]
 ```
-
-#### Embeddings
-
-- Rank directly with Bert embeddings (no BM25)
-- creating customized document vectors e.g. doc2vec
-  - [Google 幻灯片 - 用于在线创建和编辑演示文稿，完全免费。](https://docs.google.com/presentation/d/1eVcXcPLKcIOfszMSfrNH1oh2MsoYPMU1QTTepGkn1SY/edit#slide=id.gd54c5a01c8_0_37)
-  - Removing words before training (tf-idf)
-  - Training only on relevant documents vs whole corpus
-  - Ranking from vectors directly
-
-#### Add synonyms analyzer
-
-Based on HW5, we added a synonyms analyzer. The synonyms mapping is the unretrieved terms in the FN results list, such as
-release is synonyms of "effort， urges, to free, released, nearing end", other parties is synonyms of
-"Washington Post, Jeff Bezos, National Press Club, U.N. human rights experts".
-
-We generated a new index called _wapo_docs_50k_synonyms_ to test out the effect.
-
-To run the new analyzer, first generate a new index with customized analyzer. Then run evaluation metrics on the new index.
-
-| Query Type              | title  | description | narration |
-| ----------------------- | ------ | ----------- | --------- |
-| BM25 + without synonyms | 0.5233 | 0.4353      | 0.6389    |
-| BM25 + with synonyms    | 0.5026 | 0.6348      | 0.5871    |
-| fasttext + default      | NA     | NA          | NA        |
-| sbert + default         | NA     | NA          | NA        |
-
-#### N-gram analyzer
-
-## Query Expansion
-
 As it is analyzed in our baseline searches, the tier-2 relevant document is rarely retrieved by all methods. Based on the content of the tier-2 documents, one observation is that these document contains the exact information we need, but present using other expressions. Thus, query expansion is to broadens the query by introducing additional tokens or phrases. In our project, we use the automatic query expansion model, so that this mechanism can be applied to any queries under any topic.
 
 ### Wordnet Synonyms Expansion
@@ -202,7 +201,7 @@ The result shows that Query Expansion with Wordnet can improve the precision as 
 
 (`sbert + synonyms_analyzer + query_expansion` , `title`),
 
-#### Threshold
+### Threshold
 
 As is described above, query expansion thresholds can affect the search result quite significantly. Thus, further experiments is carried out on testing different thresholds on (`sbert + synonyms_analyzer + query_expansion` , `title`)
 
@@ -216,8 +215,27 @@ As is described above, query expansion thresholds can affect the search result q
 
 The result shows that the threshold ten has the highest NCDG score but with some penalty on precision. Therefore, we choose **threshold 5** in the final setting.
 
-#### Improve synonyms analyzer
-
 Based on the characteristics of the False Negative docs' content, we can append more synonyms to `synonyms.txt`.
 
 (`sbert + synonyms_analyzer + query_expansion` , `title`) is improve to (0.844, 0.4)
+
+
+<!-- BERT MODEL SELECTION -->
+# Bert model selection
+
+### Embeddings
+
+- Rank directly with Bert embeddings (no BM25)
+- creating customized document vectors e.g. doc2vec
+  - [Google 幻灯片 - 用于在线创建和编辑演示文稿，完全免费。](https://docs.google.com/presentation/d/1eVcXcPLKcIOfszMSfrNH1oh2MsoYPMU1QTTepGkn1SY/edit#slide=id.gd54c5a01c8_0_37)
+  - Removing words before training (tf-idf)
+  - Training only on relevant documents vs whole corpus
+  - Ranking from vectors directly
+
+
+<!-- FINE TUNE ON BERT -->
+# Fine tune on Bert
+* Besides selecting different pre-trained models, we also experimented some fine tune method to the default sbert model
+ (msmarcos-distilbert-base-v3) from HW5.
+ 
+### 
