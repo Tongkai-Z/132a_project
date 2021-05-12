@@ -32,13 +32,17 @@
 </details>
 
 <!-- PROJECT SUMMARY -->
-# Project Summary: 
+
+# Project Summary:
+
 ### Intro
-* Our project topic: *#815: Jason Rezaian released from Iran*
-* Description: Find documents that discuss Washington Post journalist Jason Rezaian release from Iranian prison. 
-* Narrative: Relevant documents include those that mention that Washington Post journalist Jason Rezaian had served in an Iranian prison and was released, as well as those that describe efforts from the Washington Post and others to have him released.
+
+- Our project topic: _#815: Jason Rezaian released from Iran_
+- Description: Find documents that discuss Washington Post journalist Jason Rezaian release from Iranian prison.
+- Narrative: Relevant documents include those that mention that Washington Post journalist Jason Rezaian had served in an Iranian prison and was released, as well as those that describe efforts from the Washington Post and others to have him released.
 
 We first adopted the metric from HW5 to generate a baseline score on our topics. The baseline socre are shown as below:
+
 <h3>TODO: PUT RESULT TABLE HERE</h3>
 
 To identify the detailed results, we wrote some python script to identify all the false negative and false positive results.
@@ -46,9 +50,10 @@ To identify the detailed results, we wrote some python script to identify all th
 **False Negative**: not retrieved, relevant
 
 **False Positive**: retrieved, irrelevant
+
 ```
 To improve FP and FN results:
-	1.	FP: The documents contains more keywords,  but not highly related to the description retrieved. 
+	1.	FP: The documents contains more keywords,  but not highly related to the description retrieved.
     (Trial of Post reporter detained in Iran may be nearing end) Mentions about trails, but about serving and releasing from the prision.
     ( State Department urges Iran to release Washington Post correspondent) mentions the actions from US government, but also not including the effort to release the reporter neigher him serving in prison.
 
@@ -64,9 +69,10 @@ Based on the properties of FP/FN results, we further developed 4 techniques aimi
 2. Apply Query Expansion
 3. Select different pre-trained bert models
 4. Fine tune on sbert model from HW5 (msmarcos-distilbert-base-v3)
-The detailed implementation will be discussed in later sections.
+   The detailed implementation will be discussed in later sections.
 
 ### How to run
+
 <span style="color:red"> TODO: Revise how to run code</span>.
 
 ```
@@ -86,33 +92,39 @@ python count.py --index_name wapo_docs_50k_synonyms --topic_id 815 --query_type 
 # script
 sh evaluation.sh
 
-
-
+# Search webapp
+python web.py --run
 ```
-### Dependencies
-<span style="color:red"> TODO: Add more dependencies list </span>.
-* elasticsearch_dsl
-* pytorch
-* numpy
 
+### Dependencies
+
+<span style="color:red"> TODO: Add more dependencies list </span>.
+
+- elasticsearch_dsl
+- pytorch
+- numpy
 
 <!-- Synonyms Analyzer -->
+
 # Synonyms Analyzer
-* One problem for our baseline score is that the False Negative Rate is relatively high. 
-There are 20 level-2 docs in total, but 19 of them are in FN of top_20 retrieved documents
+
+- One problem for our baseline score is that the False Negative Rate is relatively high.
+  There are 20 level-2 docs in total, but 19 of them are in FN of top_20 retrieved documents
 
 ### Approach
-* One of our solution is to apply an synonyms analyzer. And use that analyzer to generate a new index. Our new search is then performed
-on the new index.
+
+- One of our solution is to apply an synonyms analyzer. And use that analyzer to generate a new index. Our new search is then performed
+  on the new index.
 
 The synonyms analyzer maps the unretrieved terms in the FN results list. For example,
- "release" is synonyms of "effort， urges to free, released, nearing end", other parties is synonyms of
-"Washington Post, Jeff Bezos, National Press Club, U.N. human rights experts". 
+"release" is synonyms of "effort， urges to free, released, nearing end", other parties is synonyms of
+"Washington Post, Jeff Bezos, National Press Club, U.N. human rights experts".
 We generated a new index called _wapo_docs_50k_synonyms_ to test out the effect.
 
 To run the new analyzer, first generate a new index with customized analyzer. Then run evaluation metrics on the new index.
 
 ### Results Table
+
 The metrics for synonyms analyzer are listed below:
 
 <span style="color:red"> TODO: update results table</span>.
@@ -127,16 +139,16 @@ The metrics for synonyms analyzer are listed below:
 Based on the results, the NDCG score increased a little on description and remains in the same range for narration and title.
 We concluded that this method has some improvements on our retrieval system.
 
-
 ### Potential problem:
+
 One problem with the synonyms analyzer is that it requires the prior knowledge about description and narratives for each topic.
 Since we are manually adding synonyms mappings to the analyzer, we can hardly find a way to generalize the technique to some topics
-automatically. 
+automatically.
 
 To solve the problem, we looked into the method of query expansion in later experiments.
 
-
 <!-- QUERY EXPANSION -->
+
 # Query Expansion
 
 ### Queries
@@ -152,6 +164,7 @@ To solve the problem, we looked into the method of query expansion in later expe
 ```
 Example: “Do college graduates have higher income? Do high-school graduates have higher unemployment?” -> [[college, graduates, high, income], [high-school, graduates, high, unemployment]]
 ```
+
 As it is analyzed in our baseline searches, the tier-2 relevant document is rarely retrieved by all methods. Based on the content of the tier-2 documents, one observation is that these document contains the exact information we need, but present using other expressions. Thus, query expansion is to broadens the query by introducing additional tokens or phrases. In our project, we use the automatic query expansion model, so that this mechanism can be applied to any queries under any topic.
 
 ### Wordnet Synonyms Expansion
@@ -219,8 +232,8 @@ Based on the characteristics of the False Negative docs' content, we can append 
 
 (`sbert + synonyms_analyzer + query_expansion` , `title`) is improve to (0.844, 0.4)
 
-
 <!-- BERT MODEL SELECTION -->
+
 # Bert model selection
 
 ### Embeddings
@@ -232,10 +245,11 @@ Based on the characteristics of the False Negative docs' content, we can append 
   - Training only on relevant documents vs whole corpus
   - Ranking from vectors directly
 
-
 <!-- FINE TUNE ON BERT -->
+
 # Fine tune on Bert
-* Besides selecting different pre-trained models, we also experimented some fine tune method to the default sbert model
- (msmarcos-distilbert-base-v3) from HW5.
- 
-### 
+
+- Besides selecting different pre-trained models, we also experimented some fine tune method to the default sbert model
+  (msmarcos-distilbert-base-v3) from HW5.
+
+###
