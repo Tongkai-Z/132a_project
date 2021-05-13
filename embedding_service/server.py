@@ -131,6 +131,8 @@ def main():
     def embedding_map(emb):
         if emb=="fasttext":
             return INV_PORT_EMBEDDING_MAPPING["fasttext"]
+        elif emb=="fine_tune":
+            return INV_PORT_EMBEDDING_MAPPING["fine_tune"]
         elif emb.startswith("sbert"):
             return INV_PORT_EMBEDDING_MAPPING["sbert"]
     server = Server(

@@ -8,7 +8,8 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 
 from embedding_service.text_processing import TextProcessing
-
+from transformers import BertForSequenceClassification
+from transformers import AutoConfig, AutoModel
 
 class SBERTEmbedding:
     def __init__(self, model_name: str) -> None:
@@ -108,7 +109,9 @@ class Encoder:
 
     def _load(self) -> None:
         # if self.embedding == "sbert":
-        if self.embedding.startswith("sbert"):
+        if self.embedding == "sbert_fine_tune":
+            self.embedding_model = AutoModel.from_pretrained('./model_save/')
+        elif self.embedding.startswith("sbert"):
             self.embedding_model = SBERTEmbedding(self.model)
         elif self.embedding == "fasttext":
             self.embedding_model = FastTextEmbedding(self.model)
