@@ -22,6 +22,8 @@
     <list default="true" id="ddade88a-8fe8-458b-b88d-56968313398c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/es_service/doc_template.py" beforeDir="false" afterPath="$PROJECT_DIR$/es_service/doc_template.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/get_relevant.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_relevant.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -72,13 +72,8 @@ Based on the properties of FP/FN results, we further developed 4 techniques aimi
    The detailed implementation will be discussed in later sections.
 
 ### How to run
-<<<<<<< HEAD
-<span style="color:red"> TODO: Revise how to run code text</span>.
-
-=======
 
 <span style="color:red"> TODO: Revise how to run code</span>.
->>>>>>> 0860ff1eb8599a922ae20d8d0835b5a83aea0853
 
 ```
 conda activate cosi132a
@@ -134,17 +129,22 @@ The metrics for synonyms analyzer are listed below:
 
 <span style="color:red"> TODO: update results table</span>.
 
-| Query Type              | title  | description | narration |
-| ----------------------- | ------ | ----------- | --------- |
-| BM25 + without synonyms | 0.5233 | 0.4353      | 0.6389    |
-| BM25 + with synonyms    | 0.5026 | 0.6348      | 0.5871    |
-| fasttext + default      | NA     | NA          | NA        |
-| sbert + default         | NA     | NA          | NA        |
+| Search Parameters        | title  | description | narration|
+ 
 
-Based on the results, the NDCG score increased a little on description and remains in the same range for narration and title.
+| ---------------------------| ------ | ----------- | --------- |
+| BM25 + default analyzer    | 0.5233 | 0.4353      | 0.6389    |
+| BM25 + with synonyms       | 0.5026 | 0.6348      | 0.5871    |
+| fasttext + default analyzer| 0.4716 | 0.5319      | 0.4120    |
+| fasttext + with synonyms   | 0.463  | 0.632       | 0.633     |
+| sbert + default analyzer   | 0.6275 | 0.8779      | 0.6125    |
+| sbert + with synonyms      | 0.645  | 0.779       | 0.831     |
+
+Based on the results, the NDCG score increased a little on description and narrtives,
+and remains in the same range for title.
 We concluded that this method has some improvements on our retrieval system.
 
-### Potential problem:
+### Potential problems:
 
 One problem with the synonyms analyzer is that it requires the prior knowledge about description and narratives for each topic.
 Since we are manually adding synonyms mappings to the analyzer, we can hardly find a way to generalize the technique to some topics
@@ -153,7 +153,6 @@ automatically.
 To solve the problem, we looked into the method of query expansion in later experiments.
 
 <!-- QUERY EXPANSION -->
-
 # Query Expansion
 
 ### Queries
@@ -249,15 +248,14 @@ Based on the characteristics of the False Negative docs' content, we can append 
   - Removing words before training (tf-idf)
   - Training only on relevant documents vs whole corpus
   - Ranking from vectors directly
-  - Besides selecting different pre-trained models, we also experimented some fine tune method to the default sbert model
-  (msmarcos-distilbert-base-v3) from HW5.
+
 
 <!-- FINE TUNE ON BERT -->
 # Fine tune on Bert
+### Intro
 * Besides selecting different pre-trained models, we also experimented some fine tune method to the default sbert model
  (msmarcos-distilbert-base-v3) from HW5.
  
-### Intro
 * Due to the limitation of computational power in our local machine, we choose to use Google Colab to deploy our code for training
 the bert model. We used the Hugging Face library to access some pre-trained bert models, including the one from HW5.
 
