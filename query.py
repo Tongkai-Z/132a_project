@@ -21,7 +21,7 @@ def wordnet_query_expansion(query, num_synonyms):
         count = 0
         for syn in wordnet.synsets(term):
             for l in syn.lemmas():
-                if(count < num_synonyms):  # put syn in the result
+                if(count <= num_synonyms):  # put syn in the result
                     if l.name() not in synonyms:
                         synonyms.append(l.name())
                         count += 1
