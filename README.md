@@ -8,7 +8,7 @@
     <br>
     <a href="https://github.com/Tongkai-Z/132a_project">Github Repo</a>
     <br>
-    <a href="#">Presentation Slides</a>
+    <a href="https://docs.google.com/presentation/d/1YS2NF3w-5RA0q4JEAYsOcV1N4q9_0468drCeWSHY-ns/edit?usp=sharing">Presentation Slides</a>
   </p>
 
 <!-- TABLE OF CONTENTS -->
