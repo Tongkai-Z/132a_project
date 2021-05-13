@@ -1,6 +1,6 @@
 *.jl
 *.vec
-
+*.pyc
 .DS_Store
 .idea
 .idea/workspace.xml
