@@ -64,7 +64,8 @@ def embedding_reranked(result_list, index_name, vector_name, topic_id, query_typ
 
 def build_embedding_query(result_list, vector_name, topic_id, query_type, customized_query):
     type_mapping = {"title": 0, "description": 1, "narration": 2}
-    vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr", "sbert_dot_product_vector": "sbert_dot_product", "sbert_fine_tune_vector": "sbert_fine_tune"}
+    vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr",
+                      "sbert_dot_product_vector": "sbert_dot_product", "sbert_fine_tune_vector": "sbert_fine_tune"}
     query_string = parse_wapo_topics(
         "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
     if customized_query:
@@ -88,8 +89,9 @@ def customize_query(query):
     """
     return wordnet_query_expansion(query, 5)
 
+
 def vector_map(vector_name):
-    if vector_name=="ft_vector":
+    if vector_name == "ft_vector":
         return "ft_vector"
     elif vector_name.startswith("sbert_"):
         return "sbert_vector"
@@ -169,9 +171,32 @@ def get_fnfp(response, show_fpfn):
     return res
 
 
-def process_interactive_query(topic_id, query_expansion, analyzer, query_type, embedding_type):
+def get_fnfp_docs(response):
+    tp_id = []
+    global fn
+    global fp
+    for hit in response:
+        if hit.meta.id not in relative_docs:
+            fp.append(hit)
+        else:
+            tp_id.append(hit.meta.id)  # relative doc retrieved
+    for id in relative_docs:
+        if id not in tp_id:
+            fn.append(relative_docs[id])
+    return fn, fp
+
+
+def process_interactive_query(topic_id, query_expansion, analyzer, query_type, embedding_type, query_string):
+    clear_global()
+    count_query = build_count_query(topic_id)
+    count_response = search(INTERACTIVE_INDEX, count_query, 10000)
+    count(count_response)
     # search_type: bm_default bm_synonyms_analyzer  ft_vector sbert_vector
-    query_string = get_query_by_topic_id(topic_id, query_expansion, query_type)
+    if query_type != "input":
+        query_string = get_query_by_topic_id(
+            topic_id, query_expansion, query_type)
+    elif query_expansion == "yes":
+        query_string = customize_query(query_string)
     q_basic = None
     if analyzer == "synonyms_analyzer":
         q_basic = Match(
@@ -184,7 +209,8 @@ def process_interactive_query(topic_id, query_expansion, analyzer, query_type, e
     response = search(INTERACTIVE_INDEX, q_basic, INTERACTIVE_TOP)
     # embedding reranking
     if embedding_type == "ft_vector" or embedding_type.startswith("sbert_"):
-        vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr", "sbert_dot_product_vector": "sbert_dot_product", "sbert_fine_tune_vector": "sbert_fine_tune"}
+        vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr",
+                          "sbert_dot_product_vector": "sbert_dot_product", "sbert_fine_tune_vector": "sbert_fine_tune"}
         result_list = [hit.meta.id for hit in response]
         q_match_ids = Ids(values=result_list)
         encoder = EmbeddingClient(
@@ -198,7 +224,8 @@ def process_interactive_query(topic_id, query_expansion, analyzer, query_type, e
         q_c = (q_match_ids & q_vector)
         response = search(INTERACTIVE_INDEX, q_c, INTERACTIVE_TOP)
     score = generate_ndcg_score(topic_id, response)
-    return response, score
+    fnfp_res = get_fnfp_docs(response)
+    return response, score, query_string, fnfp_res
 
 
 def get_query_by_topic_id(topic_id, query_expansion, query_type):
@@ -208,6 +235,15 @@ def get_query_by_topic_id(topic_id, query_expansion, query_type):
     if query_expansion == "yes":
         query_string = customize_query(query_string)
     return query_string
+
+
+def clear_global():
+    global relative_docs
+    global fn
+    global fp
+    relative_docs = {}
+    fn = []
+    fp = []
 
 
 if __name__ == "__main__":
@@ -267,7 +303,8 @@ if __name__ == "__main__":
                         args.customized_content, args.customized_query)
     count_query = build_count_query(args.topic_id)
     # 356 is set explicitly for topic 815
-    count_response = search(args.index_name, count_query, 356)
+    count_response = search(args.index_name, count_query, 10000)
+    print(count_response.hits.total)
     count_rel = count(count_response)
     print(count_rel)
     response = search(args.index_name, query, args.top_k)
