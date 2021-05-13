@@ -23,7 +23,7 @@
             <li><a href="#dependencies">Dependencies</a></li>
         </ul>
     </li>
-    <li><a href="synonyms-selection">Synonyms Analyzer</a></li>
+    <li><a href="synonyms-analyzer">Synonyms Analyzer</a></li>
     <li><a href="#query-expansion">Query Expansion</a></li>
     <li><a href="#bert-model-selection">Bert Model Selection</a></li>
     <li><a href="#fine-tune-on-bert">Fine Tune on Bert</a></li>
@@ -67,7 +67,8 @@ Based on the properties of FP/FN results, we further developed 4 techniques aimi
 The detailed implementation will be discussed in later sections.
 
 ### How to run
-<span style="color:red"> TODO: Revise how to run code</span>.
+<span style="color:red"> TODO: Revise how to run code text</span>.
+
 
 ```
 conda activate cosi132a
@@ -238,4 +239,46 @@ Based on the characteristics of the False Negative docs' content, we can append 
 * Besides selecting different pre-trained models, we also experimented some fine tune method to the default sbert model
  (msmarcos-distilbert-base-v3) from HW5.
  
-### 
+### Intro
+* Due to the limitation of computational power in our local machine, we choose to use Google Colab to deploy our code for training
+the bert model. We used the Hugging Face library to access some pre-trained bert models, including the one from HW5.
+
+* Please refer to the code in Jupyter Notebook [here.](https://colab.research.google.com/drive/1idHtwMeycLTqmv7GGgyvvFmk6TOp8O6l?usp=sharing) 
+
+### Method
+* Preprocessing
+    1. First we extracted all documents that are labeled with our topic, including all documents woth annotation "815-0, 815-1, 815-2" in _get_relevant.py_.
+    2. We uploaded the formated csv file to my personal google drive [here](https://drive.google.com/file/d/1IDLbVP3im2xIJr2gaB8Fmn4rGrguSU6J/view?usp=sharing)
+    in order to later use it in Google Colab.
+    
+* Setup for training
+    1. Setup GPU and Hugging Face library
+    2. Load data from uploaded csv file, which contains the labels (0 as irrelevant, 1 as relevant score of 1 or 2),
+     and content and customized content.
+    3. Adopt the default model from HW5, which is the msmarcos-distiled-bert-base-v3.
+    4. In order to train the model based on our documents, we converted the model output into a two-class classification model.
+    Documents with relative score of 1 or 2 are labels as positive, and documents with relative scores of 0 is labeled as 0.  
+    5. Tokenize the content using bert tokenizer, and convert the list of terms into a vector of integer. We also padded the 
+    vector with a [CLS] label for class, and a [SEP] label for ending symbol. Finally each content string is converted into a tensor
+    vector of integers for training.
+    6. Split the training data and test data into ratio of 9:1.
+    7. Setup hyperparameters for training loop. We used the following hyperparameters
+    * batch size 8
+    * Epoch number 4
+    * Learning rate 0.05
+    * Adam optimizer
+    8. Save the model to google drive, and apply the model to ES.
+
+### Problems
+* When converting the content into vectors, the default config in bert limited the maximum vector length to 512. However, 
+most of content string is longer than 512 tokens. Thus, we truncated the vectors to fit in the length. We are not sure if the 
+truncation will affect informative level of the vector.
+
+* Due to the limitation of memory in Google Colab, we have to reduce the batch size to a small number. We are not able to test
+if a larger batch size would give us better training results.
+
+* We cannot find a simple approach to directly train the model just for embedding. Thus we converted the base distilled 
+bert model into a classification model. 
+
+* After we saved the model, we had problem incorporate it with the current embedding server. Thus we cannot test the actual result
+in our evaluation metrics.
