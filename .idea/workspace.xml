@@ -22,8 +22,6 @@
     <list default="true" id="ddade88a-8fe8-458b-b88d-56968313398c" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/es_service/doc_template.py" beforeDir="false" afterPath="$PROJECT_DIR$/es_service/doc_template.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/get_relevant.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_relevant.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +54,7 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
-  <component name="RunManager" selected="Shell Script.scripts.sh">
+  <component name="RunManager" selected="Shell Script.evaluation.sh">
     <configuration name="pa5_official" type="PythonConfigurationType" factoryName="Python">
       <module name="pa5_official" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -79,6 +77,17 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="evaluation.sh" type="ShConfigurationType" temporary="true">
+      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
+      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/evaluation.sh" />
+      <option name="SCRIPT_OPTIONS" value="" />
+      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
+      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
+      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="scripts.sh" type="ShConfigurationType" temporary="true">
       <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
       <option name="SCRIPT_PATH" value="$PROJECT_DIR$/scripts.sh" />
@@ -92,6 +101,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Shell Script.evaluation.sh" />
         <item itemvalue="Shell Script.scripts.sh" />
       </list>
     </recent_temporary>

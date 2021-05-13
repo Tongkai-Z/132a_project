@@ -129,10 +129,8 @@ The metrics for synonyms analyzer are listed below:
 
 <span style="color:red"> TODO: update results table</span>.
 
-| Search Parameters        | title  | description | narration|
- 
-
-| ---------------------------| ------ | ----------- | --------- |
+| Search Parameters          | title  | description | narration |
+| -------------------------- | ------ | ----------- | --------- |
 | BM25 + default analyzer    | 0.5233 | 0.4353      | 0.6389    |
 | BM25 + with synonyms       | 0.5026 | 0.6348      | 0.5871    |
 | fasttext + default analyzer| 0.4716 | 0.5319      | 0.4120    |
@@ -264,7 +262,7 @@ the bert model. We used the Hugging Face library to access some pre-trained bert
 ### Method
 * Preprocessing
     1. First we extracted all documents that are labeled with our topic, including all documents woth annotation "815-0, 815-1, 815-2" in _get_relevant.py_.
-    2. We uploaded the formated csv file to my personal google drive [here](https://drive.google.com/file/d/1IDLbVP3im2xIJr2gaB8Fmn4rGrguSU6J/view?usp=sharing)
+    2. We uploaded the formatted csv file to my personal google drive [here](https://drive.google.com/file/d/1IDLbVP3im2xIJr2gaB8Fmn4rGrguSU6J/view?usp=sharing)
     in order to later use it in Google Colab.
     
 * Setup for training
