@@ -107,7 +107,8 @@ class Encoder:
         self._load()
 
     def _load(self) -> None:
-        if self.embedding == "sbert":
+        # if self.embedding == "sbert":
+        if self.embedding.startswith("sbert"):
             self.embedding_model = SBERTEmbedding(self.model)
         elif self.embedding == "fasttext":
             self.embedding_model = FastTextEmbedding(self.model)

@@ -7,7 +7,7 @@ from embedding_service.client import EmbeddingClient
 from metrics import ndcg
 from query import wordnet_query_expansion
 
-INTERACTIVE_INDEX = "wapo_docs_50k"
+INTERACTIVE_INDEX = "wapo_docs_50k_synonyms"
 INTERACTIVE_TOP = 20
 relative_docs = {}
 fn = []
@@ -17,9 +17,8 @@ fp = []
 def build_query(topic_id, query_type, customized_content, customized_query):
     # load the topic as query string
     # 0:title, 1:description 2:narratives
-    type_mapping = {"title": 0, "description": 1, "narration": 2}
-    query_string = parse_wapo_topics(
-        "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
+    query_string = get_query_by_topic_id(
+        topic_id, customized_content, query_type)
     if customized_query:
         query_string = customize_query(query_string)
     q_basic = None
@@ -65,7 +64,7 @@ def embedding_reranked(result_list, index_name, vector_name, topic_id, query_typ
 
 def build_embedding_query(result_list, vector_name, topic_id, query_type, customized_query):
     type_mapping = {"title": 0, "description": 1, "narration": 2}
-    vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext"}
+    vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr", "sbert_dot_product_vector": "sbert_dot_product"}
     query_string = parse_wapo_topics(
         "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
     if customized_query:
@@ -89,6 +88,12 @@ def customize_query(query):
     """
     return wordnet_query_expansion(query, 5)
 
+def vector_map(vector_name):
+    if vector_name=="ft_vector":
+        return "ft_vector"
+    elif vector_name.startswith("sbert_"):
+        return "sbert_vector"
+
 
 def generate_script_score_query(query_vector, vector_name):
     """
@@ -100,7 +105,7 @@ def generate_script_score_query(query_vector, vector_name):
     q_script = ScriptScore(
         query={"match_all": {}},  # use a match-all query
         script={  # script your scoring function
-            "source": f"cosineSimilarity(params.query_vector, '{vector_name}') + 1.0",
+            "source": f"cosineSimilarity(params.query_vector, '{vector_map(vector_name)}') + 1.0",
             # add 1.0 to avoid negative score
             "params": {"query_vector": query_vector},
         },
@@ -111,7 +116,7 @@ def generate_script_score_query(query_vector, vector_name):
 def generate_ndcg_score(topic_id, response):
     relevance_list = [parse_score(topic_id, hit.annotation)
                       for hit in response]
-    return ndcg(relevance_list, len(relevance_list))
+    return round(ndcg(relevance_list, len(relevance_list)), 3)
 
 
 def parse_score(topic_id, annotation):
@@ -162,6 +167,47 @@ def get_fnfp(response, show_fpfn):
         print("false negative:\n", fn)
         print("false negative relevance: ", fn_relative_map)
     return res
+
+
+def process_interactive_query(topic_id, query_expansion, analyzer, query_type, embedding_type):
+    # search_type: bm_default bm_synonyms_analyzer  ft_vector sbert_vector
+    query_string = get_query_by_topic_id(topic_id, query_expansion, query_type)
+    q_basic = None
+    if analyzer == "synonyms_analyzer":
+        q_basic = Match(
+            custom_content={"query": query_string}
+        )
+    else:
+        q_basic = Match(
+            content={"query": query_string}
+        )
+    response = search(INTERACTIVE_INDEX, q_basic, INTERACTIVE_TOP)
+    # embedding reranking
+    if search_type == "ft_vector" or search_type.startswith("sbert_"):
+        vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr", "sbert_dot_product_vector": "sbert_dot_product"}
+        result_list = [hit.meta.id for hit in response]
+        q_match_ids = Ids(values=result_list)
+        encoder = EmbeddingClient(
+            host="localhost", embedding_type=vector_mapping[embedding_type])
+        query_vector = encoder.encode([query_string], pooling="mean").tolist()[
+            0
+        ]
+        q_vector = generate_script_score_query(
+            query_vector, embedding_type
+        )
+        q_c = (q_match_ids & q_vector)
+        response = search(INTERACTIVE_INDEX, q_c, INTERACTIVE_TOP)
+    score = generate_ndcg_score(topic_id, response)
+    return response, score
+
+
+def get_query_by_topic_id(topic_id, query_expansion, query_type):
+    type_mapping = {"title": 0, "description": 1, "narration": 2}
+    query_string = parse_wapo_topics(
+        "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
+    if query_expansion == "yes":
+        query_string = customize_query(query_string)
+    return query_string
 
 
 if __name__ == "__main__":
@@ -223,21 +269,21 @@ if __name__ == "__main__":
     # 356 is set explicitly for topic 815
     count_response = search(args.index_name, count_query, 356)
     count_rel = count(count_response)
-    # print(count_rel)
+    print(count_rel)
     response = search(args.index_name, query, args.top_k)
     # reranked by embedding
     if args.vector_name != "":
-        # result_list = [hit.meta.id for hit in response]
-        # response = embedding_reranked(result_list,
-        #                               args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k, args.customized_query)
-        response = search(args.index_name, query, args.top_k)
+        result_list = [hit.meta.id for hit in response]
+        response = embedding_reranked(result_list,
+                                      args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k, args.customized_query)
+        # response = search(args.index_name, query, args.top_k)
 
     # print(count_response.hits.total)
     if args.show_fpfn:
         print("Retrieved relevance: ")
         for hit in response:
             print(hit.title + " : " + hit.annotation)
-    print("ndcg_score: ", round(generate_ndcg_score(args.topic_id, response), 3))
+    print("ndcg_score: ", generate_ndcg_score(args.topic_id, response))
     res = get_fnfp(response, args.show_fpfn)
     print("false positve:", res[0])
     print("false negative:", res[1])
