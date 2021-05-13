@@ -141,6 +141,7 @@ NDCG@20 scores for different models:
 | msmarco-roberta-base-ance-fristp (Dot-product)|0.4364|0.3826|0.8100|
 |facebook-dpr-ctx_encoder-single-nq-base (Dense Passage Retrieval)|0.8031|0.7382|0.4790|
 |stsb-mpnet-base-v2 (Semantic Textual Similarity)|0.4245|0.4190|0.5164|
+
 According to the results, the dot-product model performs better when narration is used as query type, and the DPR model performs better with title as query type, the STS model does not perform well in all 3 query types, therefore it will not be used in the following experiments.
 
 <!-- Synonyms Analyzer -->
@@ -289,6 +290,7 @@ Based on the characteristics of the False Negative docs' content, we can append 
 | sbert_dpr                           |0.436/0.20|0.383/0.15|0.810/0.25|
 | sbert_dpr + qe(query expansion)     |0.569/0.30|0.629/0.25|0.579/0.15|
 | sbert_dpr + synonyms_analyzer + qe  |0.641/0.40|0.674/0.35|0.395/0.15|
+
 It is obvious that query expansion and synonyms analyzer had improved the accuracy.
 
 
