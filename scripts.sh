@@ -5,7 +5,7 @@ python -m embedding_service.server --embedding fasttext  --model pa5_data/wiki-n
 python -m embedding_service.server --embedding sbert  --model msmarco-distilbert-base-v3
 
 # load sentence BERT embeddings that are trained on nq-distilbert-base-v1
-python -m embedding_service.server --embedding sbert  --model nq-distilbert-base-v1
+# python -m embedding_service.server --embedding sbert  --model nq-distilbert-base-v1
 # load sentence BERT embeddings that are trained on facebook-dpr-ctx_encoder-multiset-base
 python -m embedding_service.server --embedding sbert_dpr  --model msmarco-roberta-base-ance-fristp
 

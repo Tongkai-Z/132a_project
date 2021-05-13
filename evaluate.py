@@ -42,7 +42,7 @@ def process_interactive_query(query_string, search_type):
     response = search(INTERACTIVE_INDEX, q_basic, INTERACTIVE_TOP)
     # embedding reranking
     # if search_type == "ft_vector" or search_type == "sbert_vector":
-    if search_type == "ft_vector" or search_type.startswith("sbert_vector"):
+    if search_type == "ft_vector" or search_type.startswith("sbert_"):
         vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr", "sbert_dot_product_vector": "sbert_dot_product"}
         result_list = [hit.meta.id for hit in response]
         q_match_ids = Ids(values=result_list)

@@ -9,8 +9,8 @@ echo
 echo $topic $qt
 echo bm25_default
 python search.py --index_name wapo_docs_50k --topic_id $topic --query_type $qt --top_k 20 
-# echo bm25_default+customized_query
-# python search.py --index_name wapo_docs_50k --topic_id $topic --query_type $qt --top_k 20 -q
+echo bm25_default+customized_query
+python search.py --index_name wapo_docs_50k --topic_id $topic --query_type $qt --top_k 20 -q
 # echo bm25+synonyms_analyzer+customized_query
 # python search.py --index_name wapo_docs_50k_synonyms --topic_id $topic --query_type $qt --top_k 20 -u -q
 # echo bm25_c

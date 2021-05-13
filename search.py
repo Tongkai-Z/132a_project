@@ -183,8 +183,8 @@ def process_interactive_query(topic_id, query_expansion, analyzer, query_type, e
         )
     response = search(INTERACTIVE_INDEX, q_basic, INTERACTIVE_TOP)
     # embedding reranking
-    if embedding_type == "ft_vector" or embedding_type == "sbert_vector":
-        vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext"}
+    if search_type == "ft_vector" or search_type.startswith("sbert_"):
+        vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr", "sbert_dot_product_vector": "sbert_dot_product"}
         result_list = [hit.meta.id for hit in response]
         q_match_ids = Ids(values=result_list)
         encoder = EmbeddingClient(
@@ -273,10 +273,10 @@ if __name__ == "__main__":
     response = search(args.index_name, query, args.top_k)
     # reranked by embedding
     if args.vector_name != "":
-        # result_list = [hit.meta.id for hit in response]
-        # response = embedding_reranked(result_list,
-        #                               args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k, args.customized_query)
-        response = search(args.index_name, query, args.top_k)
+        result_list = [hit.meta.id for hit in response]
+        response = embedding_reranked(result_list,
+                                      args.index_name, args.vector_name, args.topic_id, args.query_type, args.top_k, args.customized_query)
+        # response = search(args.index_name, query, args.top_k)
 
     # print(count_response.hits.total)
     if args.show_fpfn:
