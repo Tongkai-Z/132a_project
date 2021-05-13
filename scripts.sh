@@ -1,5 +1,5 @@
 # load fasttext embeddings that are trained on wiki news. Each embedding has 300 dimensions
-python -m embedding_service.server --embedding fasttext  --model pa5_data/wiki-news-300d-1M-subword.vec
+python -m embedding_service.server --embedding fasttext  --model data/wiki-news-300d-1M-subword.vec
 
 # load sentence BERT embeddings that are trained on msmarco. Each embedding has 768 dimensions
 python -m embedding_service.server --embedding sbert  --model msmarco-distilbert-base-v3
@@ -15,7 +15,7 @@ python -m embedding_service.server --embedding sbert_fine_tune --model sbert_fin
 
 
 # load wapo docs into the index called "wapo_docs_50k"
-python load_es_index.py --index_name wapo_docs_50k --wapo_path pa5_data/subset_wapo_50k_sbert_ft_filtered.jl
+python load_es_index.py --index_name wapo_docs_50k --wapo_path data/subset_wapo_50k_sbert_ft_filtered.jl
 
 # use title from topic 321 as the query; search over the custom_content field from index "wapo_docs_50k" based on BM25 and compute NDCG@20
 # Use the new index with synonyms analyzer to test the results

@@ -27,7 +27,7 @@ custom_analyzer = analyzer(
 synonyms_token_filter = token_filter(
     'synonyms_token_filter',     # Any name for the filter
     'synonym',                   # Synonym filter type
-    synonyms_path='pa5_data/synonym.txt'       # Synonyms mapping will be inlined
+    synonyms_path='analysis/synonym.txt'       # Synonyms mapping will be inlined
 )
 
 synonyms_analyzer = analyzer("synonyms_analzyer", tokenizer="standard", filter=[

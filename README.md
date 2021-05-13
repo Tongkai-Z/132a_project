@@ -107,7 +107,7 @@ python count.py --index_name wapo_docs_50k --topic_id 815 --query_type narration
 # Build new index
 # add synonym list in synonym.txt
 cp ./es_service/synonym.txt $ELASTICSEARCH/elasticsearch-7.10.2/config/analysis/
-python load_es_index.py --index_name wapo_docs_50k_synonyms --wapo_path pa5_data/subset_wapo_50k_sbert_ft_filtered.jl
+python load_es_index.py --index_name wapo_docs_50k_synonyms --wapo_path data/subset_wapo_50k_sbert_ft_filtered.jl
 #  Run evaluation based on new index
 python count.py --index_name wapo_docs_50k_synonyms --topic_id 815 --query_type description --vector_name sbert_vector --top_k 20 -u
 
