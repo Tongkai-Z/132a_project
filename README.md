@@ -23,10 +23,12 @@
             <li><a href="#dependencies">Dependencies</a></li>
         </ul>
     </li>
-    <li><a href="synonyms-analyzer">Synonyms Analyzer</a></li>
+    <li><a href="#pre-trained-models">Pre-trained models</a></li>
+    <li><a href="#synonyms-analyzer">Synonyms Analyzer</a></li>
     <li><a href="#query-expansion">Query Expansion</a></li>
     <li><a href="#bert-model-selection">Bert Model Selection</a></li>
     <li><a href="#fine-tune-on-bert">Fine Tune on Bert</a></li>
+    <li><a href="#user-interface">User Interface</a></li>
     <li><a href="#">Contributions</a></li>
   </ol>
 </details>
@@ -34,6 +36,8 @@
 <!-- PROJECT SUMMARY -->
 
 # Project Summary:
+
+![image-20210513160918895](./images/image-20210513160918895.png)
 
 ### Intro
 
@@ -123,17 +127,27 @@ python web.py --run
 <!-- Pre-Trained Models -->
 
 # Pre-Trained Models
+
 After trying the default fasttext and sBert models, we decide to check some other pre-trianed models.
+
 #### - msmarco-distilbert-base-v3
+
 The default sbert model uses cosine-similarity.
+
 #### - msmarco-roberta-base-ance-fristp
+
 It is a model uses dot-product instead of cosine-similarity. Models tuned for cosine-similarity will prefer the retrieval of short documents, while models tuned for dot-product will prefer the retrieval of longer documents.
+
 #### - facebook-dpr-ctx_encoder-single-nq-base
+
 It is a model based on Dense Passage Retrieval, which can outperform the traditional sparse retrieval component in open-domain question answering.
+
 #### - stsb-mpnet-base-v2
+
 It is a model measures the semantic similarity of two texts.
 
 ### Results Table
+
 NDCG@20 scores for different models:
 | Pre0trained Model | title | description | narration|
 | ---------------------------| ------ | ----------- | --------- |
@@ -167,15 +181,14 @@ To run the new analyzer, first generate a new index with customized analyzer. Th
 
 The metrics for synonyms analyzer are listed below:
 
-
-| Search Parameters | title | description | narration|
-| ---------------------------| ------ | ----------- | --------- |
-| BM25 + default analyzer | 0.5233 | 0.4353 | 0.6389 |
-| BM25 + with synonyms | 0.5026 | 0.6348 | 0.5871 |
-| fasttext + default analyzer| 0.4716 | 0.5319 | 0.4120 |
-| fasttext + with synonyms | 0.463 | 0.632 | 0.633 |
-| sbert + default analyzer | 0.6275 | 0.8779 | 0.6125 |
-| sbert + with synonyms | 0.645 | 0.779 | 0.831 |
+| Search Parameters           | title  | description | narration |
+| --------------------------- | ------ | ----------- | --------- |
+| BM25 + default analyzer     | 0.5233 | 0.4353      | 0.6389    |
+| BM25 + with synonyms        | 0.5026 | 0.6348      | 0.5871    |
+| fasttext + default analyzer | 0.4716 | 0.5319      | 0.4120    |
+| fasttext + with synonyms    | 0.463  | 0.632       | 0.633     |
+| sbert + default analyzer    | 0.6275 | 0.8779      | 0.6125    |
+| sbert + with synonyms       | 0.645  | 0.779       | 0.831     |
 
 Based on the results, the NDCG score increased a little on description and narrtives,
 and remains in the same range for title.
@@ -274,23 +287,22 @@ Based on the characteristics of the False Negative docs' content, we can append 
 
 (`sbert + synonyms_analyzer + query_expansion` , `title`) is improve to (0.844, 0.4)
 
-
 <!-- BERT MODEL SELECTION -->
 
 # Bert model selection
 
 ### ndcg@20score/precision for different pre-trained sbert models
-| Query Type                     | Title     | Description  | Narration |
-| ------------------------------ | --------- | ---------- | ----------- |
-| sbert_dot_product                          |0.803/0.20|0.738/0.15|0.479/0.25|
-| sbert_dot_product + qe                     |0.505/0.30|0.420/0.25|0.308/0.15|
-| sbert_dot_product + synonyms_analyzer + qe |0.899/0.40|0.463/0.35|0.390/0.15|
-| sbert_dpr                           |0.436/0.20|0.383/0.15|0.810/0.25|
-| sbert_dpr + qe(query expansion)     |0.569/0.30|0.629/0.25|0.579/0.15|
-| sbert_dpr + synonyms_analyzer + qe  |0.641/0.40|0.674/0.35|0.395/0.15|
+
+| Query Type                                 | Title      | Description | Narration  |
+| ------------------------------------------ | ---------- | ----------- | ---------- |
+| sbert_dot_product                          | 0.803/0.20 | 0.738/0.15  | 0.479/0.25 |
+| sbert_dot_product + qe                     | 0.505/0.30 | 0.420/0.25  | 0.308/0.15 |
+| sbert_dot_product + synonyms_analyzer + qe | 0.899/0.40 | 0.463/0.35  | 0.390/0.15 |
+| sbert_dpr                                  | 0.436/0.20 | 0.383/0.15  | 0.810/0.25 |
+| sbert_dpr + qe(query expansion)            | 0.569/0.30 | 0.629/0.25  | 0.579/0.15 |
+| sbert_dpr + synonyms_analyzer + qe         | 0.641/0.40 | 0.674/0.35  | 0.395/0.15 |
 
 It is obvious that query expansion and synonyms analyzer had improved the accuracy.
-
 
 ### Embeddings
 
@@ -353,8 +365,52 @@ It is obvious that query expansion and synonyms analyzer had improved the accura
 - After we saved the model, we had problem incorporate it with the current embedding server. Thus we cannot test the actual result
   in our evaluation metrics.
 
+# User Interface
+
+This Flask App is aiming for providing the IR researcher with a friendly interface to observe the result of their searching strategies.
+
+## Input Text
+
+![image-20210513161629921](./images/image-20210513161629921.png)
+
+- Topic_ID: topic id is the target id of the topic, it is neccessary for evaluation and query generate based on query type. e.g. title of topic 815
+- Customized Query: when query type is selected as 'input', user can input their own query strings. If the topic title, description or narration is used as query, this box can be left blank.
+
+## Options
+
+![image-20210513161758481](./images/image-20210513161758481.png)
+
+This search options are based on the experiments we made:
+
+- WordNet Query Expansion
+- Synonyms Analyzer
+- Query type
+- Embedding type
+
+## Search Results
+
+The default behavior of this search engine is returning the top 20 results to the user.
+
+- The **false positive** and **false negative** documents is listed for further improvement.
+- The strategy is evaluated by **NCDG@20** and **precision** score, which is also shown at the top of the results list.
+- Strategy summary and query string used for search are displayed to user.
+- Relevance tag is shown for optimization
+- Header
+
+  ![image-20210513162336907](./images/image-20210513162336907.png)
+
+- False Positive Page
+
+  ![image-20210513162504713](./images/image-20210513162504713.png)
+
+- Result list
+
+  ![image-20210513162745455](./images/image-20210513162745455.png)
+
 # Contribution
 
 Shi Qiu: synonyms analyzer, train fine tuned bert.
+
 Tongkai Zhang: Query Expansion, Merge into ES webapp, User Interface
+
 Bowei Sun: Pre-trained models, load servers
