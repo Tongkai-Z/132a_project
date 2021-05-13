@@ -24,6 +24,9 @@ fp = []
 
 
 def build_query(topic_id, query_type, customized_content, customized_query):
+    '''
+    this method build the query based on the given four parameters
+    '''
     # load the topic as query string
     # 0:title, 1:description 2:narratives
     query_string = get_query_by_topic_id(
@@ -43,6 +46,9 @@ def build_query(topic_id, query_type, customized_content, customized_query):
 
 
 def build_count_query(topic_id):
+    '''
+    this method build the query for counting the relevant documents for a given topic
+    '''
     query_string = topic_id + "-"
     q_basic = Match(
         annotation={"query": query_string}
@@ -51,6 +57,9 @@ def build_count_query(topic_id):
 
 
 def search(index, query, top_k):
+    '''
+    this method process the topK search in ES
+    '''
     s = Search(using="default", index=index).query(query)[
         :top_k
     ]  # initialize a query and return top five results
@@ -59,6 +68,9 @@ def search(index, query, top_k):
 
 
 def print_response(response):
+    '''
+    this method print the document info in terminal
+    '''
     for hit in response:
         print(
             hit.meta.id, hit.meta.score, hit.title, hit.annotation, sep="\t"
@@ -66,12 +78,18 @@ def print_response(response):
 
 
 def embedding_reranked(result_list, index_name, vector_name, topic_id, query_type, top_k, customized_query):
+    '''
+    this method process the embedding reranking 
+    '''
     query = build_embedding_query(
         result_list, vector_name, topic_id, query_type, customized_query)
     return search(index_name, query, top_k)
 
 
 def build_embedding_query(result_list, vector_name, topic_id, query_type, customized_query):
+    '''
+    this method build the query for embedding reranking
+    '''
     type_mapping = {"title": 0, "description": 1, "narration": 2}
     vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr",
                       "sbert_dot_product_vector": "sbert_dot_product", "sbert_fine_tune_vector": "sbert_fine_tune"}
@@ -125,12 +143,18 @@ def generate_script_score_query(query_vector, vector_name):
 
 
 def generate_ndcg_score(topic_id, response):
+    '''
+    this method calculate the ndcg score for the search
+    '''
     relevance_list = [parse_score(topic_id, hit.annotation)
                       for hit in response]
     return round(ndcg(relevance_list, len(relevance_list)), 3)
 
 
 def parse_score(topic_id, annotation):
+    '''
+    this method get the relevance score from annotation
+    '''
     if annotation == "" or annotation == None:
         return 0
     if annotation[:annotation.index("-")] != topic_id:
@@ -139,6 +163,9 @@ def parse_score(topic_id, annotation):
 
 
 def count(response):
+    '''
+    this method get the relative docs under a topic
+    '''
     global relative_docs
     res = [0, 0, 0]
     for hit in response:
@@ -151,6 +178,9 @@ def count(response):
 
 
 def get_fnfp(response, show_fpfn):
+    '''
+    this method gets the false negative and false positive documents for a single search and returns the number of fn and fp
+    '''
     global fn
     global fp
     tp_id = []
@@ -181,6 +211,9 @@ def get_fnfp(response, show_fpfn):
 
 
 def get_fnfp_docs(response):
+    '''
+    this method gets the false positive and false negative documents of a single search
+    '''
     tp_id = []
     global fn
     global fp
@@ -196,6 +229,9 @@ def get_fnfp_docs(response):
 
 
 def process_interactive_query(topic_id, query_expansion, analyzer, query_type, embedding_type, query_string):
+    '''
+    this method process the query from the flask front end
+    '''
     clear_global()
     count_query = build_count_query(topic_id)
     count_response = search(INTERACTIVE_INDEX, count_query, 10000)
@@ -238,6 +274,9 @@ def process_interactive_query(topic_id, query_expansion, analyzer, query_type, e
 
 
 def get_query_by_topic_id(topic_id, query_expansion, query_type):
+    '''
+    this method generate the query string based on topic id and the query type
+    '''
     type_mapping = {"title": 0, "description": 1, "narration": 2}
     query_string = parse_wapo_topics(
         "data/topics2018.xml")[topic_id][type_mapping[query_type]]
@@ -247,6 +286,9 @@ def get_query_by_topic_id(topic_id, query_expansion, query_type):
 
 
 def clear_global():
+    '''
+    this method clears the global variable
+    '''
     global relative_docs
     global fn
     global fp
