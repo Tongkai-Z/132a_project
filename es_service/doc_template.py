@@ -8,14 +8,12 @@ from elasticsearch_dsl import (  # type: ignore
     analyzer,
 )
 
-# TODO: build your own analyzer
 custom_analyzer = analyzer(
     "custom_analyzer",
     tokenizer="standard",
     filter=["asciifolding", "snowball", "lowercase"],
 )
 
-# Add synonyms analyzer
 
 # Synonyms mapping
 # my_synonyms = ["effort, urges, to free, released, free, release, immediate release, will release, frees, departure of Americans from Iran",
@@ -23,10 +21,13 @@ custom_analyzer = analyzer(
 #                "Obama, U.N. rights committee, the State Department",
 #                "soon, at last",
 #                "detention, held, detained, arrest"]
+
+# Add synonyms analyzer to build a new index
+# Author: Shi Qiu
 synonyms_token_filter = token_filter(
     'synonyms_token_filter',     # Any name for the filter
     'synonym',                   # Synonym filter type
-    synonyms_path='analysis/synonym.txt'       # Synonyms mapping will be inlined
+    synonyms_path='pa5_data/synonym.txt'       # Synonyms mapping will be inlined
 )
 
 synonyms_analyzer = analyzer("synonyms_analzyer", tokenizer="standard", filter=[
