@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {
+                background-color: rgb(236, 230, 168);
+            }
+        </style>
+        <title>TREC Topic Search</title>
+    </head>
+    <body>
+    <h2>TREC Topic Search</h2>
+    <h4>False Positive List:</h4>
+    <p>Total: {{ fp | length}}</p>
+    <!-- show records from start to end in each page -->
+    <ol start=1>
+        {% for doc in fp %}
+            <li><a href="{{url_for('doc_data', doc_id=doc.meta.id)}}">(Relevance: {{doc.annotation}}) {{doc.title}}</a></li>
+
+            <p>{{doc.content|truncate(150)}}</p>
+        {% endfor %}
+    </ol>
+    </body>
+    </html>

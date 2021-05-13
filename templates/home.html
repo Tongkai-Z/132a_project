@@ -13,14 +13,23 @@
     <h3>TREC Topic Search</h3>
 
     <form action="{{ url_for('results') }}" name="search" method="post">
-      <label for="query">Topic_ID:</label>
+      <label for="topic_id">Topic_ID:</label>
       <input
         type="text"
-        id="query"
+        id="topic_id"
         name="topic_id"
         size="50"
         placeholder="{{topic_id}}"
         value="815"
+      />
+      <label for="query_string">Customized Query:</label>
+      <input
+        type="text"
+        id="query_string"
+        name="query_string"
+        size="50"
+        placeholder="{{query_string}}"
+        value=""
       />
       <input type="submit" value="Search" />
       <p>Please select Query Expansion:</p>
@@ -40,7 +49,9 @@
       />
       <label for="syn">Synonyms Analyzer</label>
       <p>Please select query type:</p>
-      <input type="radio" id="title" name="query_type" value="title" checked />
+      <input type="radio" id="input" name="query_type" value="input" checked />
+      <label for="title">Input</label>
+      <input type="radio" id="title" name="query_type" value="title" />
       <label for="title">Title</label>
       <input
         type="radio"
@@ -52,7 +63,7 @@
       <input type="radio" id="narration" name="query_type" value="narration" />
       <label for="narration">Narration</label>
       <p>Please select embedding:</p>
-      <input type="radio" id="none" name="embedding_type" value="none" />
+      <input type="radio" id="none" name="embedding_type" value="none" checked/>
       <label for="none">None</label>
       <input
         type="radio"
@@ -66,7 +77,6 @@
         id="sbert_vector"
         name="embedding_type"
         value="sbert_vector"
-        checked
       />
       <label for="sbert_vector">sbert_vector</label>
       <input
@@ -74,7 +84,6 @@
         id="sbert_dpr_vector"
         name="embedding_type"
         value="sbert_dpr_vector"
-        checked
       />
       <label for="sbert_dpr_vector">sbert_dpr_vector</label>
       <input
@@ -82,7 +91,6 @@
         id="sbert_dot_product_vector"
         name="embedding_type"
         value="sbert_dot_product_vector"
-        checked
       />
       <label for="sbert_dot_product_vector">sbert_dot_product_vector</label>
     </form>
