@@ -30,10 +30,11 @@
     <li><a href="#">Contributions</a></li>
   </ol>
 </details>
-
 <!-- PROJECT SUMMARY -->
 
 # Project Summary:
+
+![image-20210513160918895](./images/image-20210513160918895.png)
 
 ### Intro
 
@@ -291,17 +292,59 @@ Based on the characteristics of the False Negative docs' content, we can append 
 - When converting the content into vectors, the default config in bert limited the maximum vector length to 512. However,
   most of content string is longer than 512 tokens. Thus, we truncated the vectors to fit in the length. We are not sure if the
   truncation will affect informative level of the vector.
-
 - Due to the limitation of memory in Google Colab, we have to reduce the batch size to a small number. We are not able to test
   if a larger batch size would give us better training results.
-
 - We cannot find a simple approach to directly train the model just for embedding. Thus we converted the base distilled
   bert model into a classification model.
-
 - After we saved the model, we had problem incorporate it with the current embedding server. Thus we cannot test the actual result
   in our evaluation metrics.
+
+
+
+## User Interface
+
+This Flask App is aiming for providing the IR researcher with a friendly interface to observe the result of their searching strategies. 
+
+### Input Text
+
+![image-20210513161629921](./images/image-20210513161629921.png)
+
+- Topic_ID: topic id is the target id of the topic, it is neccessary for evaluation and query generate based on query type. e.g. title of topic 815
+- Customized Query: when query type is selected as 'input', user can input their own query strings. If the topic title, description or narration is used as query, this box can be left blank.
+
+### Options
+
+![image-20210513161758481](./images/image-20210513161758481.png)
+
+This search options are based on the experiments we made:
+
+- WordNet Query Expansion
+- Synonyms Analyzer
+- Query type
+- Embedding type
+
+### Search Results
+
+The default behavior of this search engine is returning the top 20 results to the user. 
+
+- The **false positive** and **false negative** documents is listed for further improvement. 
+- The strategy is evaluated by **NCDG@20** and **precision** score, which is also shown at the top of the results list.
+- Strategy summary and query string used for search are displayed to user.
+- Relevance tag is shown for optimization
+- Header
+
+![image-20210513162336907](./images/image-20210513162336907.png)
+
+- False Positive Page
+
+  ![image-20210513162504713](./images/image-20210513162504713.png)
+
+- Result list
+
+  ![image-20210513162745455](./images/image-20210513162745455.png)
 
 # Contribution
 
 Shi Qiu: synonyms analyzer, train fine tuned bert.
-Tongkai Zhang: Query Expansion, Merge into ES webapp, User Interface
+
+Tongkai Zhang: Query Expansion, Merge synonyms analyzer and QE into ES webapp, Developed User Interface

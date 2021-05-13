@@ -67,7 +67,7 @@ def build_embedding_query(result_list, vector_name, topic_id, query_type, custom
     vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr",
                       "sbert_dot_product_vector": "sbert_dot_product", "sbert_fine_tune_vector": "sbert_fine_tune"}
     query_string = parse_wapo_topics(
-        "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
+        "data/topics2018.xml")[topic_id][type_mapping[query_type]]
     if customized_query:
         query_string = customize_query(query_string)
     q_match_ids = Ids(values=result_list)
@@ -231,7 +231,7 @@ def process_interactive_query(topic_id, query_expansion, analyzer, query_type, e
 def get_query_by_topic_id(topic_id, query_expansion, query_type):
     type_mapping = {"title": 0, "description": 1, "narration": 2}
     query_string = parse_wapo_topics(
-        "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
+        "data/topics2018.xml")[topic_id][type_mapping[query_type]]
     if query_expansion == "yes":
         query_string = customize_query(query_string)
     return query_string
