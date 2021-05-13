@@ -1,4 +1,6 @@
 #!/bin/bash
+#Run this script for automatic evaluation
+#author: Tongkai Zhang
 qt=title
 
 for topic in 815

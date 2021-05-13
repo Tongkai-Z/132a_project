@@ -2,6 +2,12 @@ from flask import Flask, render_template, request
 from search import process_interactive_query
 from elasticsearch_dsl.connections import connections
 
+'''
+This module integrates the search engine backend with a simple front end, mainly for improve research efficiency
+
+@author Tongkai Zhang
+'''
+
 app = Flask(__name__)
 
 result_list = []

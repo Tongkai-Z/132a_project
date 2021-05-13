@@ -7,6 +7,15 @@ from embedding_service.client import EmbeddingClient
 from metrics import ndcg
 from query import wordnet_query_expansion
 
+'''
+This module integrates the logic of searching strategy into elasticsearch by providing basic methods of building query, embedding rerank.
+Also implemented the logic of evaluation as well as count the false positive and false negative.
+
+If this module is running as main, it will display a easily readable evaluated result in the terminal.
+
+@author Tongkai Zhang
+'''
+
 INTERACTIVE_INDEX = "wapo_docs_50k_synonyms"
 INTERACTIVE_TOP = 20
 relative_docs = {}
