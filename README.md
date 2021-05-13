@@ -16,24 +16,29 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-        <a href="#project-summary">Project Summary</a>
+        <a href="#project-intro">Project Intro</a>
         <ul>
             <li><a href="#intro">Intro</a></li>
             <li><a href="#how-to-run">How to run</a></li>
             <li><a href="#dependencies">Dependencies</a></li>
         </ul>
     </li>
-    <li><a href="synonyms-analyzer">Synonyms Analyzer</a></li>
+    <li><a href="#pre-trained-models">Pre-trained models</a></li>
+    <li><a href="#synonyms-analyzer">Synonyms Analyzer</a></li>
     <li><a href="#query-expansion">Query Expansion</a></li>
     <li><a href="#bert-model-selection">Bert Model Selection</a></li>
     <li><a href="#fine-tune-on-bert">Fine Tune on Bert</a></li>
-    <li><a href="#">Contributions</a></li>
+    <li><a href="#user-interface">User Interface</a></li>
+    <li><a href="summary">Summary</a></li>
+    <li><a href="contribution">Contributions</a></li>
   </ol>
 </details>
 
-<!-- PROJECT SUMMARY -->
+<!-- PROJECT INTRO -->
 
-# Project Summary:
+# Project Intro:
+
+![image-20210513160918895](./images/image-20210513160918895.png)
 
 ### Intro
 
@@ -43,7 +48,12 @@
 
 We first adopted the metric from HW5 to generate a baseline score on our topics. The baseline socre are shown as below:
 
-<h3>TODO: PUT RESULT TABLE HERE</h3>
+| Search Type   | title      | description | narration   |
+| ------------- | ------     | ----------- | ---------   |
+| BM25 Default  | 0.5233/0.2 | 0.4353/0.15 | 0.6389/0.25 |
+| BM25 + Custom | 0.5222/0.2 | 0.5074/0.15 | 0.4577/0.25 |
+| fasttext      | 0.4716/0.2 | 0.5319/0.15 | 0.4120/0.25 |
+| sbert         | 0.6275/0.2 | 0.8779/0.15 | 0.6125/0.25 |
 
 To identify the detailed results, we wrote some python script to identify all the false negative and false positive results.
 
@@ -73,12 +83,24 @@ Based on the properties of FP/FN results, we further developed 4 techniques aimi
 
 ### How to run
 
-<span style="color:red"> TODO: Revise how to run code</span>.
-
 ```
 conda activate cosi132a
+# load servers
+# load fasttext embeddings that are trained on wiki news. Each embedding has 300 dimensions
 python -m embedding_service.server --embedding fasttext  --model pa5_data/wiki-news-300d-1M-subword.vec
+
+# load sentence BERT embeddings that are trained on msmarco. Each embedding has 768 dimensions
 python -m embedding_service.server --embedding sbert  --model msmarco-distilbert-base-v3
+
+# load sentence BERT embeddings that are trained on msmarco-roberta-base-ance-fristp
+python -m embedding_service.server --embedding sbert_dpr  --model msmarco-roberta-base-ance-fristp
+
+# load sentence BERT embeddings that are trained on facebook-dpr-ctx_encoder-multiset-base
+python -m embedding_service.server --embedding sbert_dot_product  --model facebook-dpr-ctx_encoder-multiset-base
+
+# load our own fine tuned model
+python -m embedding_service.server --embedding sbert_fine_tune --model sbert_fine_tune
+
 python count.py --index_name wapo_docs_50k --topic_id 815 --query_type narration --vector_name sbert_vector --top_k 20
 
 # Run synonyms analyzer
@@ -98,11 +120,48 @@ python web.py --run
 
 ### Dependencies
 
-<span style="color:red"> TODO: Add more dependencies list </span>.
-
 - elasticsearch_dsl
+- elasticsearch
+- sentence-transformers
 - pytorch
+- flask
 - numpy
+- zmq
+- transformers
+
+<!-- Pre-Trained Models -->
+
+# Pre-Trained Models
+
+After trying the default fasttext and sBert models, we decide to check some other pre-trianed models.
+
+#### - msmarco-distilbert-base-v3
+
+The default sbert model uses cosine-similarity.
+
+#### - msmarco-roberta-base-ance-fristp
+
+It is a model uses dot-product instead of cosine-similarity. Models tuned for cosine-similarity will prefer the retrieval of short documents, while models tuned for dot-product will prefer the retrieval of longer documents.
+
+#### - facebook-dpr-ctx_encoder-single-nq-base
+
+It is a model based on Dense Passage Retrieval, which can outperform the traditional sparse retrieval component in open-domain question answering.
+
+#### - stsb-mpnet-base-v2
+
+It is a model measures the semantic similarity of two texts.
+
+### Results Table
+
+NDCG@20 scores for different models:
+| Pre0trained Model | title | description | narration|
+| ---------------------------| ------ | ----------- | --------- |
+| msmarco-distilbert-base-v3 (Default)|0.6275|0.8779|0.6125|
+| msmarco-roberta-base-ance-fristp (Dot-product)|0.4364|0.3826|0.8100|
+|facebook-dpr-ctx_encoder-single-nq-base (Dense Passage Retrieval)|0.8031|0.7382|0.4790|
+|stsb-mpnet-base-v2 (Semantic Textual Similarity)|0.4245|0.4190|0.5164|
+
+According to the results, the dot-product model performs better when narration is used as query type, and the DPR model performs better with title as query type, the STS model does not perform well in all 3 query types, therefore it will not be used in the following experiments.
 
 <!-- Synonyms Analyzer -->
 
@@ -127,16 +186,14 @@ To run the new analyzer, first generate a new index with customized analyzer. Th
 
 The metrics for synonyms analyzer are listed below:
 
-<span style="color:red"> TODO: update results table</span>.
-
-| Search Parameters          | title  | description | narration |
-| -------------------------- | ------ | ----------- | --------- |
-| BM25 + default analyzer    | 0.5233 | 0.4353      | 0.6389    |
-| BM25 + with synonyms       | 0.5026 | 0.6348      | 0.5871    |
-| fasttext + default analyzer| 0.4716 | 0.5319      | 0.4120    |
-| fasttext + with synonyms   | 0.463  | 0.632       | 0.633     |
-| sbert + default analyzer   | 0.6275 | 0.8779      | 0.6125    |
-| sbert + with synonyms      | 0.645  | 0.779       | 0.831     |
+| Search Parameters           | title      | description      | narration     |
+| --------------------------- | ---------- | ---------------- | ------------- |
+| BM25 + default analyzer     | 0.5233/0.2 | 0.43530/0.15     | 0.6389/0.25   |
+| BM25 + with synonyms        | 0.5026/0.3 | 0.6348/0.25      | 0.5871/0.3    |
+| fasttext + default analyzer | 0.4716/0.2 | 0.5319/0.15      | 0.4120/0.25   |
+| fasttext + with synonyms    | 0.463/0.3  | 0.632/0.25       | 0.633/0.3     |
+| sbert + default analyzer    | 0.6275/0.2 | 0.8779/0.15      | 0.6125/0.25   |
+| sbert + with synonyms       | 0.645/0.3  | 0.779/0.25       | 0.831/0.3     |
 
 Based on the results, the NDCG score increased a little on description and narrtives,
 and remains in the same range for title.
@@ -151,17 +208,18 @@ automatically.
 To solve the problem, we looked into the method of query expansion in later experiments.
 
 <!-- QUERY EXPANSION -->
+
 # Query Expansion
 
 ### Queries
 
+Possible Methods:
+
 - customize the query
-  - https://docs.google.com/presentation/d/1eVcXcPLKcIOfszMSfrNH1oh2MsoYPMU1QTTepGkn1SY/edit#slide=id.gd4bdbdc458_0_11
-- query expansion[Google 幻灯片 - 用于在线创建和编辑演示文稿，完全免费。](https://docs.google.com/presentation/d/1VaO-38JedXqk2YUYiaY8dkgzBJqIDw0xvWaypY8wAX4/edit#slide=id.gd4a5a6b322_0_0)
+- query expansion
 - devide and combine query vectors
 - Remove redundant words in narrations and descriptions
 - Extract meaningful words, embedding them, Use IDF to filter synonyms
-  - [Google 幻灯片 - 用于在线创建和编辑演示文稿，完全免费。](https://docs.google.com/presentation/d/19c5Itz2Tn2ZCmPOyZHWKinaVdWd2fVbPXMWAcKl1I4A/edit#slide=id.gd55babf1e4_0_116)
 
 ```
 Example: “Do college graduates have higher income? Do high-school graduates have higher unemployment?” -> [[college, graduates, high, income], [high-school, graduates, high, unemployment]]
@@ -238,64 +296,139 @@ Based on the characteristics of the False Negative docs' content, we can append 
 
 # Bert model selection
 
+### ndcg@20score/precision for different pre-trained sbert models
+
+| Query Type                                 | Title      | Description | Narration  |
+| ------------------------------------------ | ---------- | ----------- | ---------- |
+| sbert_dot_product                          | 0.803/0.20 | 0.738/0.15  | 0.479/0.25 |
+| sbert_dot_product + qe                     | 0.505/0.30 | 0.420/0.25  | 0.308/0.15 |
+| sbert_dot_product + synonyms_analyzer + qe | 0.899/0.40 | 0.463/0.35  | 0.390/0.15 |
+| sbert_dpr                                  | 0.436/0.20 | 0.383/0.15  | 0.810/0.25 |
+| sbert_dpr + qe(query expansion)            | 0.569/0.30 | 0.629/0.25  | 0.579/0.15 |
+| sbert_dpr + synonyms_analyzer + qe         | 0.641/0.40 | 0.674/0.35  | 0.395/0.15 |
+
+It is obvious that query expansion and synonyms analyzer had improved the accuracy.
+
 ### Embeddings
 
 - Rank directly with Bert embeddings (no BM25)
 - creating customized document vectors e.g. doc2vec
-  - [Google 幻灯片 - 用于在线创建和编辑演示文稿，完全免费。](https://docs.google.com/presentation/d/1eVcXcPLKcIOfszMSfrNH1oh2MsoYPMU1QTTepGkn1SY/edit#slide=id.gd54c5a01c8_0_37)
   - Removing words before training (tf-idf)
   - Training only on relevant documents vs whole corpus
   - Ranking from vectors directly
 
-
 <!-- FINE TUNE ON BERT -->
-# Fine tune on Bert
-### Intro
-* Besides selecting different pre-trained models, we also experimented some fine tune method to the default sbert model
- (msmarcos-distilbert-base-v3) from HW5.
- 
-* Due to the limitation of computational power in our local machine, we choose to use Google Colab to deploy our code for training
-the bert model. We used the Hugging Face library to access some pre-trained bert models, including the one from HW5.
 
-* Please refer to the code in Jupyter Notebook [here.](https://colab.research.google.com/drive/1idHtwMeycLTqmv7GGgyvvFmk6TOp8O6l?usp=sharing) 
+# Fine tune on Bert
+
+### Intro
+
+- Besides selecting different pre-trained models, we also experimented some fine tune method to the default sbert model
+  (msmarcos-distilbert-base-v3) from HW5.
+
+- Due to the limitation of computational power in our local machine, we choose to use Google Colab to deploy our code for training
+  the bert model. We used the Hugging Face library to access some pre-trained bert models, including the one from HW5.
+
+- Please refer to the code in Jupyter Notebook [here.](https://colab.research.google.com/drive/1idHtwMeycLTqmv7GGgyvvFmk6TOp8O6l?usp=sharing)
 
 ### Method
-* Preprocessing
-    1. First we extracted all documents that are labeled with our topic, including all documents woth annotation "815-0, 815-1, 815-2" in _get_relevant.py_.
-    2. We uploaded the formatted csv file to my personal google drive [here](https://drive.google.com/file/d/1IDLbVP3im2xIJr2gaB8Fmn4rGrguSU6J/view?usp=sharing)
-    in order to later use it in Google Colab.
-    
-* Setup for training
-    1. Setup GPU and Hugging Face library
-    2. Load data from uploaded csv file, which contains the labels (0 as irrelevant, 1 as relevant score of 1 or 2),
+
+- Preprocessing
+  1. First we extracted all documents that are labeled with our topic, including all documents woth annotation "815-0, 815-1, 815-2" in _get_relevant.py_.
+  2. We uploaded the formated csv file to my personal google drive [here](https://drive.google.com/file/d/1IDLbVP3im2xIJr2gaB8Fmn4rGrguSU6J/view?usp=sharing)
+     in order to later use it in Google Colab.
+- Setup for training
+  1. Setup GPU and Hugging Face library
+  2. Load data from uploaded csv file, which contains the labels (0 as irrelevant, 1 as relevant score of 1 or 2),
      and content and customized content.
-    3. Adopt the default model from HW5, which is the msmarcos-distiled-bert-base-v3.
-    4. In order to train the model based on our documents, we converted the model output into a two-class classification model.
-    Documents with relative score of 1 or 2 are labels as positive, and documents with relative scores of 0 is labeled as 0.  
-    5. Tokenize the content using bert tokenizer, and convert the list of terms into a vector of integer. We also padded the 
-    vector with a [CLS] label for class, and a [SEP] label for ending symbol. Finally each content string is converted into a tensor
-    vector of integers for training.
-    6. Split the training data and test data into ratio of 9:1.
-    7. Setup hyperparameters for training loop. We used the following hyperparameters
-    * batch size 8
-    * Epoch number 4
-    * Learning rate 0.05
-    * Adam optimizer
-    8. Save the model to google drive, and apply the model to ES.
+  3. Adopt the default model from HW5, which is the msmarcos-distiled-bert-base-v3.
+  4. In order to train the model based on our documents, we converted the model output into a two-class classification model.
+     Documents with relative score of 1 or 2 are labels as positive, and documents with relative scores of 0 is labeled as 0.
+  5. Tokenize the content using bert tokenizer, and convert the list of terms into a vector of integer. We also padded the
+     vector with a [CLS] label for class, and a [SEP] label for ending symbol. Finally each content string is converted into a tensor
+     vector of integers for training.
+  6. Split the training data and test data into ratio of 9:1.
+  7. Setup hyperparameters for training loop. We used the following hyperparameters
+  - batch size 8
+  - Epoch number 4
+  - Learning rate 0.05
+  - Adam optimizer
+  8. Save the model to google drive, and apply the model to ES.
 
 ### Problems
-* When converting the content into vectors, the default config in bert limited the maximum vector length to 512. However, 
-most of content string is longer than 512 tokens. Thus, we truncated the vectors to fit in the length. We are not sure if the 
-truncation will affect informative level of the vector.
 
-* Due to the limitation of memory in Google Colab, we have to reduce the batch size to a small number. We are not able to test
-if a larger batch size would give us better training results.
+- When converting the content into vectors, the default config in bert limited the maximum vector length to 512. However,
+  most of content string is longer than 512 tokens. Thus, we truncated the vectors to fit in the length. We are not sure if the
+  truncation will affect informative level of the vector.
 
-* We cannot find a simple approach to directly train the model just for embedding. Thus we converted the base distilled 
-bert model into a classification model. 
+- Due to the limitation of memory in Google Colab, we have to reduce the batch size to a small number. We are not able to test
+  if a larger batch size would give us better training results.
 
-* After we saved the model, we had problem incorporate it with the current embedding server. Thus we cannot test the actual result
-in our evaluation metrics.
+- We cannot find a simple approach to directly train the model just for embedding. Thus we converted the base distilled
+  bert model into a classification model.
+
+- After we saved the model, we had problem incorporate it with the current embedding server. Thus we cannot test the actual result
+  in our evaluation metrics.
+
+# User Interface
+
+This Flask App is aiming for providing the IR researcher with a friendly interface to observe the result of their searching strategies.
+
+### Input Text
+
+![image-20210513161629921](./images/image-20210513161629921.png)
+
+- Topic_ID: topic id is the target id of the topic, it is neccessary for evaluation and query generate based on query type. e.g. title of topic 815
+- Customized Query: when query type is selected as 'input', user can input their own query strings. If the topic title, description or narration is used as query, this box can be left blank.
+
+### Options
+
+![image-20210513161758481](./images/image-20210513161758481.png)
+
+This search options are based on the experiments we made:
+
+- WordNet Query Expansion
+- Synonyms Analyzer
+- Query type
+- Embedding type
+
+### Search Results
+
+The default behavior of this search engine is returning the top 20 results to the user.
+
+- The **false positive** and **false negative** documents is listed for further improvement.
+- The strategy is evaluated by **NCDG@20** and **precision** score, which is also shown at the top of the results list.
+- Strategy summary and query string used for search are displayed to user.
+- Relevance tag is shown for optimization
+- Header
+
+  ![image-20210513162336907](./images/image-20210513162336907.png)
+
+- False Positive Page
+
+  ![image-20210513162504713](./images/image-20210513162504713.png)
+
+- Result list
+
+  ![image-20210513162745455](./images/image-20210513162745455.png)
+
+
+# Summary
+- In summary, we used four approaches to improve our results.
+1. Synonyms analyzer
+2. Query Expansion
+3. Different pre-trained model
+4. Fine tune Distilled Bert
+
+- We combined the first three techniques, and we witnessed improvements in both NDCG scores and precision values.
+- In fine tune bert, we were expecting some improvement since we trained the model particularly on documents labeled with our topic.
+However, we failed to incorporate the saved model into the embedding server. We would like to work this particular problem and 
+and the fine tune model work in further works. 
 
 # Contribution
-Shi Qiu: synonyms analyzer, train fine tuned bert.
+
+Shi Qiu: synonyms analyzer, train fine tuned bert, Incorporate embedding server
+
+Tongkai Zhang: Query Expansion, Merge into ES webapp, User Interface
+
+Bowei Sun: Pre-trained models, load servers

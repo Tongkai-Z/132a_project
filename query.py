@@ -1,11 +1,19 @@
-import string
 from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 stop_words = set(stopwords.words("english"))
 
+'''
+This module provide method for expanding the query using wordnet synonyms
+
+@author Tongkai Zhang
+'''
+
 
 def wordnet_query_expansion(query, num_synonyms):
+    '''
+    this method expand the query by adding synonyms to each term.
+    '''
     word_tokens = word_tokenize(query)
     s = [w for w in word_tokens if not w in stop_words]
     synonyms = []

@@ -20,7 +20,7 @@ def get_all_relevant(topic_id, index_name):
     """
     count_query = build_count_query(topic_id)
     count_response = search(index_name, count_query, 356)
-    with open(f"pa5_data/{topic_id}_relevant_docs.csv", mode='w') as csv_file:
+    with open(f"data/{topic_id}_relevant_docs.csv", mode='w') as csv_file:
         fieldnames = ['label', 'content', 'customed_content']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
         writer.writeheader()

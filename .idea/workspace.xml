@@ -20,19 +20,34 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ddade88a-8fe8-458b-b88d-56968313398c" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/model_save/config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model_save/special_tokens_map.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model_save/tokenizer_config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/model_save/vocab.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image-20210513160918895.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image-20210513161629921.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image-20210513161758481.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image-20210513162336907.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image-20210513162504713.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/images/image-20210513162745455.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/fn.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/templates/fp.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/embedding_service/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/embedding_service/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/embedding_service/embed.py" beforeDir="false" afterPath="$PROJECT_DIR$/embedding_service/embed.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/embedding_service/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/embedding_service/server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/evaluate.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/evaluation.sh" beforeDir="false" afterPath="$PROJECT_DIR$/evaluation.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_analyzer.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_embedding.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/example_query.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/get_relevant.py" beforeDir="false" afterPath="$PROJECT_DIR$/get_relevant.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pa5_data/815_relevant_docs.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/815_relevant_docs.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pa5_data/synonyms.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/synonyms.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pa5_data/topics2018.xml" beforeDir="false" afterPath="$PROJECT_DIR$/data/topics2018.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pa5_data/topics2018_r.xml" beforeDir="false" afterPath="$PROJECT_DIR$/data/topics2018_r.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/query.py" beforeDir="false" afterPath="$PROJECT_DIR$/query.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scripts.sh" beforeDir="false" afterPath="$PROJECT_DIR$/scripts.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/search.py" beforeDir="false" afterPath="$PROJECT_DIR$/search.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/home.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/results.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/results.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web.py" beforeDir="false" afterPath="$PROJECT_DIR$/web.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,6 +159,10 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
+    <state x="458" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1620902183870">
+      <screen x="0" y="23" width="1440" height="806" />
+    </state>
+    <state x="458" y="180" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.23.1440.806@0.23.1440.806" timestamp="1620902183870" />
     <state width="1419" height="206" key="GridCell.Tab.0.bottom" timestamp="1620641818013">
       <screen x="0" y="23" width="1440" height="806" />
     </state>

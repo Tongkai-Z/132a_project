@@ -12,41 +12,94 @@
     <body>
     <h2>TREC Topic Search</h2>
     <form action="{{ url_for('results') }}" name="search" method="post">
-        <label for="query">Topic_ID:</label>
-        <input type="text" id="query" name="topic_id" size=50 placeholder="{{topic_id}}" value="815">
-        <input type="submit" value="Search">
+        <label for="topic_id">Topic_ID:</label>
+        <input
+          type="text"
+          id="topic_id"
+          name="topic_id"
+          size="50"
+          placeholder="{{topic_id}}"
+          value="815"
+        />
+        <label for="query_string">Customized Query:</label>
+        <input
+          type="text"
+          id="query_string"
+          name="query_string"
+          size="50"
+          placeholder="{{query_string}}"
+          value=""
+        />
+        <input type="submit" value="Search" />
         <p>Please select Query Expansion:</p>
-        <input type="radio" id="no" name="query_expansion" value="no" checked>
+        <input type="radio" id="no" name="query_expansion" value="no" checked />
         <label for="no">no</label>
-        <input type="radio" id="yes" name="query_expansion" value="yes">
+        <input type="radio" id="yes" name="query_expansion" value="yes" />
         <label for="yes">yes</label>
         <p>Please select analyzer:</p>
-        <input type="radio" id="default" name="analyzer" value="default" >
+        <input type="radio" id="default" name="analyzer" value="default" />
         <label for="default">Default</label>
-        <input type="radio" id="syn" name="analyzer" value="synonyms_analyzer" checked>
+        <input
+          type="radio"
+          id="syn"
+          name="analyzer"
+          value="synonyms_analyzer"
+          checked
+        />
         <label for="syn">Synonyms Analyzer</label>
         <p>Please select query type:</p>
-        <input type="radio" id="title" name="query_type" value="title" checked>
+        <input type="radio" id="input" name="query_type" value="input" checked />
+        <label for="title">Input</label>
+        <input type="radio" id="title" name="query_type" value="title" />
         <label for="title">Title</label>
-        <input type="radio" id="description" name="query_type" value="description">
+        <input
+          type="radio"
+          id="description"
+          name="query_type"
+          value="description"
+        />
         <label for="description">Description</label>
-        <input type="radio" id="narration" name="query_type" value="narration">
+        <input type="radio" id="narration" name="query_type" value="narration" />
         <label for="narration">Narration</label>
         <p>Please select embedding:</p>
-        <input type="radio" id="none" name="embedding_type" value="none" checked>
+        <input type="radio" id="none" name="embedding_type" value="none" checked/>
         <label for="none">None</label>
-        <input type="radio" id="ft_vector" name="embedding_type" value="ft_vector">
+        <input
+          type="radio"
+          id="ft_vector"
+          name="embedding_type"
+          value="ft_vector"
+        />
         <label for="ft_vector">ft_vector</label>
-        <input type="radio" id="sbert_vector" name="embedding_type" value="sbert_vector">
+        <input
+          type="radio"
+          id="sbert_vector"
+          name="embedding_type"
+          value="sbert_vector"
+        />
         <label for="sbert_vector">sbert_vector</label>
-        <input type="radio" id="sbert_dpr_vector" name="embedding_type" value="sbert_dpr_vector">
+        <input
+          type="radio"
+          id="sbert_dpr_vector"
+          name="embedding_type"
+          value="sbert_dpr_vector"
+        />
         <label for="sbert_dpr_vector">sbert_dpr_vector</label>
-        <input type="radio" id="sbert_dot_product_vector" name="embedding_type" value="sbert_dot_product_vector">
+        <input
+          type="radio"
+          id="sbert_dot_product_vector"
+          name="embedding_type"
+          value="sbert_dot_product_vector"
+        />
         <label for="sbert_dot_product_vector">sbert_dot_product_vector</label>
-    </form>
+      </form>
     <h4>Search Result:</h4>
+    <a href="{{url_for('false_positive')}}">False Positive</a>
+    <a href="{{url_for('false_negative')}}">False Negative</a>
     <p>Text representation: {{search_type}}</p>
+    <p>Query: {{query_text}}</p>
     <p>NCDG@20: {{score}}</p>
+    <p>Precision: {{precision}}</p>
     <p>Total hit: {{ doc_list | length}}</p>
     <!-- show records from start to end in each page -->
     <ol start={{start + 1}}>

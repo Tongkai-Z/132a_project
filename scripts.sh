@@ -4,14 +4,13 @@ python -m embedding_service.server --embedding fasttext  --model pa5_data/wiki-n
 # load sentence BERT embeddings that are trained on msmarco. Each embedding has 768 dimensions
 python -m embedding_service.server --embedding sbert  --model msmarco-distilbert-base-v3
 
-# load sentence BERT embeddings that are trained on nq-distilbert-base-v1
-# python -m embedding_service.server --embedding sbert  --model nq-distilbert-base-v1
-# load sentence BERT embeddings that are trained on facebook-dpr-ctx_encoder-multiset-base
+# load sentence BERT embeddings that are trained on msmarco-roberta-base-ance-fristp
 python -m embedding_service.server --embedding sbert_dpr  --model msmarco-roberta-base-ance-fristp
 
-
+# load sentence BERT embeddings that are trained on facebook-dpr-ctx_encoder-multiset-base
 python -m embedding_service.server --embedding sbert_dot_product  --model facebook-dpr-ctx_encoder-multiset-base
 
+# load our own fine tuned model
 python -m embedding_service.server --embedding sbert_fine_tune --model sbert_fine_tune
 
 

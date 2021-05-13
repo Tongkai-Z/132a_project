@@ -1,7 +1,8 @@
 *.jl
 *.vec
-
+*.pyc
 .DS_Store
 .idea
 .idea/workspace.xml
 model_save/pytorch_model.bin
+
