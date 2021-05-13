@@ -167,10 +167,8 @@ To run the new analyzer, first generate a new index with customized analyzer. Th
 
 The metrics for synonyms analyzer are listed below:
 
-<span style="color:red"> TODO: update results table</span>.
 
 | Search Parameters | title | description | narration|
-
 | ---------------------------| ------ | ----------- | --------- |
 | BM25 + default analyzer | 0.5233 | 0.4353 | 0.6389 |
 | BM25 + with synonyms | 0.5026 | 0.6348 | 0.5871 |
