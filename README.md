@@ -78,8 +78,22 @@ Based on the properties of FP/FN results, we further developed 4 techniques aimi
 
 ```
 conda activate cosi132a
+# load servers
+# load fasttext embeddings that are trained on wiki news. Each embedding has 300 dimensions
 python -m embedding_service.server --embedding fasttext  --model pa5_data/wiki-news-300d-1M-subword.vec
+
+# load sentence BERT embeddings that are trained on msmarco. Each embedding has 768 dimensions
 python -m embedding_service.server --embedding sbert  --model msmarco-distilbert-base-v3
+
+# load sentence BERT embeddings that are trained on msmarco-roberta-base-ance-fristp
+python -m embedding_service.server --embedding sbert_dpr  --model msmarco-roberta-base-ance-fristp
+
+# load sentence BERT embeddings that are trained on facebook-dpr-ctx_encoder-multiset-base
+python -m embedding_service.server --embedding sbert_dot_product  --model facebook-dpr-ctx_encoder-multiset-base
+
+# load our own fine tuned model
+python -m embedding_service.server --embedding sbert_fine_tune --model sbert_fine_tune
+
 python count.py --index_name wapo_docs_50k --topic_id 815 --query_type narration --vector_name sbert_vector --top_k 20
 
 # Run synonyms analyzer
