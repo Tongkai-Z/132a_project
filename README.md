@@ -27,6 +27,7 @@
     <li><a href="#query-expansion">Query Expansion</a></li>
     <li><a href="#bert-model-selection">Bert Model Selection</a></li>
     <li><a href="#fine-tune-on-bert">Fine Tune on Bert</a></li>
+    <li><a href="#user-interface">User Interface</a></li>
     <li><a href="#">Contributions</a></li>
   </ol>
 </details>
@@ -313,20 +314,18 @@ Based on the characteristics of the False Negative docs' content, we can append 
 - After we saved the model, we had problem incorporate it with the current embedding server. Thus we cannot test the actual result
   in our evaluation metrics.
 
+# User Interface
 
+This Flask App is aiming for providing the IR researcher with a friendly interface to observe the result of their searching strategies.
 
-## User Interface
-
-This Flask App is aiming for providing the IR researcher with a friendly interface to observe the result of their searching strategies. 
-
-### Input Text
+## Input Text
 
 ![image-20210513161629921](./images/image-20210513161629921.png)
 
 - Topic_ID: topic id is the target id of the topic, it is neccessary for evaluation and query generate based on query type. e.g. title of topic 815
 - Customized Query: when query type is selected as 'input', user can input their own query strings. If the topic title, description or narration is used as query, this box can be left blank.
 
-### Options
+## Options
 
 ![image-20210513161758481](./images/image-20210513161758481.png)
 
@@ -337,11 +336,11 @@ This search options are based on the experiments we made:
 - Query type
 - Embedding type
 
-### Search Results
+## Search Results
 
-The default behavior of this search engine is returning the top 20 results to the user. 
+The default behavior of this search engine is returning the top 20 results to the user.
 
-- The **false positive** and **false negative** documents is listed for further improvement. 
+- The **false positive** and **false negative** documents is listed for further improvement.
 - The strategy is evaluated by **NCDG@20** and **precision** score, which is also shown at the top of the results list.
 - Strategy summary and query string used for search are displayed to user.
 - Relevance tag is shown for optimization
