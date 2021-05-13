@@ -8,7 +8,7 @@
     <br>
     <a href="https://github.com/Tongkai-Z/132a_project">Github Repo</a>
     <br>
-    <a href="#">Presentation Slides</a>
+    <a href="https://docs.google.com/presentation/d/1YS2NF3w-5RA0q4JEAYsOcV1N4q9_0468drCeWSHY-ns/edit?usp=sharing">Presentation Slides</a>
   </p>
 
 <!-- TABLE OF CONTENTS -->
@@ -16,7 +16,7 @@
   <summary>Table of Contents</summary>
   <ol>
     <li>
-        <a href="#project-summary">Project Summary</a>
+        <a href="#project-intro">Project Intro</a>
         <ul>
             <li><a href="#intro">Intro</a></li>
             <li><a href="#how-to-run">How to run</a></li>
@@ -29,13 +29,14 @@
     <li><a href="#bert-model-selection">Bert Model Selection</a></li>
     <li><a href="#fine-tune-on-bert">Fine Tune on Bert</a></li>
     <li><a href="#user-interface">User Interface</a></li>
-    <li><a href="#">Contributions</a></li>
+    <li><a href="summary">Summary</a></li>
+    <li><a href="contribution">Contributions</a></li>
   </ol>
 </details>
 
-<!-- PROJECT SUMMARY -->
+<!-- PROJECT INTRO -->
 
-# Project Summary:
+# Project Intro:
 
 ![image-20210513160918895](./images/image-20210513160918895.png)
 
@@ -47,7 +48,12 @@
 
 We first adopted the metric from HW5 to generate a baseline score on our topics. The baseline socre are shown as below:
 
-<h3>TODO: PUT RESULT TABLE HERE</h3>
+| Search Type   | title      | description | narration   |
+| ------------- | ------     | ----------- | ---------   |
+| BM25 Default  | 0.5233/0.2 | 0.4353/0.15 | 0.6389/0.25 |
+| BM25 + Custom | 0.5222/0.2 | 0.5074/0.15 | 0.4577/0.25 |
+| fasttext      | 0.4716/0.2 | 0.5319/0.15 | 0.4120/0.25 |
+| sbert         | 0.6275/0.2 | 0.8779/0.15 | 0.6125/0.25 |
 
 To identify the detailed results, we wrote some python script to identify all the false negative and false positive results.
 
@@ -76,8 +82,6 @@ Based on the properties of FP/FN results, we further developed 4 techniques aimi
    The detailed implementation will be discussed in later sections.
 
 ### How to run
-
-<span style="color:red"> TODO: Revise how to run code</span>.
 
 ```
 conda activate cosi132a
@@ -123,6 +127,7 @@ python web.py --run
 - flask
 - numpy
 - zmq
+- transformers
 
 <!-- Pre-Trained Models -->
 
@@ -181,14 +186,14 @@ To run the new analyzer, first generate a new index with customized analyzer. Th
 
 The metrics for synonyms analyzer are listed below:
 
-| Search Parameters           | title  | description | narration |
-| --------------------------- | ------ | ----------- | --------- |
-| BM25 + default analyzer     | 0.5233 | 0.4353      | 0.6389    |
-| BM25 + with synonyms        | 0.5026 | 0.6348      | 0.5871    |
-| fasttext + default analyzer | 0.4716 | 0.5319      | 0.4120    |
-| fasttext + with synonyms    | 0.463  | 0.632       | 0.633     |
-| sbert + default analyzer    | 0.6275 | 0.8779      | 0.6125    |
-| sbert + with synonyms       | 0.645  | 0.779       | 0.831     |
+| Search Parameters           | title      | description      | narration     |
+| --------------------------- | ---------- | ---------------- | ------------- |
+| BM25 + default analyzer     | 0.5233/0.2 | 0.43530/0.15     | 0.6389/0.25   |
+| BM25 + with synonyms        | 0.5026/0.3 | 0.6348/0.25      | 0.5871/0.3    |
+| fasttext + default analyzer | 0.4716/0.2 | 0.5319/0.15      | 0.4120/0.25   |
+| fasttext + with synonyms    | 0.463/0.3  | 0.632/0.25       | 0.633/0.3     |
+| sbert + default analyzer    | 0.6275/0.2 | 0.8779/0.15      | 0.6125/0.25   |
+| sbert + with synonyms       | 0.645/0.3  | 0.779/0.25       | 0.831/0.3     |
 
 Based on the results, the NDCG score increased a little on description and narrtives,
 and remains in the same range for title.
@@ -369,14 +374,14 @@ It is obvious that query expansion and synonyms analyzer had improved the accura
 
 This Flask App is aiming for providing the IR researcher with a friendly interface to observe the result of their searching strategies.
 
-## Input Text
+### Input Text
 
 ![image-20210513161629921](./images/image-20210513161629921.png)
 
 - Topic_ID: topic id is the target id of the topic, it is neccessary for evaluation and query generate based on query type. e.g. title of topic 815
 - Customized Query: when query type is selected as 'input', user can input their own query strings. If the topic title, description or narration is used as query, this box can be left blank.
 
-## Options
+### Options
 
 ![image-20210513161758481](./images/image-20210513161758481.png)
 
@@ -387,7 +392,7 @@ This search options are based on the experiments we made:
 - Query type
 - Embedding type
 
-## Search Results
+### Search Results
 
 The default behavior of this search engine is returning the top 20 results to the user.
 
@@ -407,9 +412,22 @@ The default behavior of this search engine is returning the top 20 results to th
 
   ![image-20210513162745455](./images/image-20210513162745455.png)
 
+
+# Summary
+- In summary, we used four approaches to improve our results.
+1. Synonyms analyzer
+2. Query Expansion
+3. Different pre-trained model
+4. Fine tune Distilled Bert
+
+- We combined the first three techniques, and we witnessed improvements in both NDCG scores and precision values.
+- In fine tune bert, we were expecting some improvement since we trained the model particularly on documents labeled with our topic.
+However, we failed to incorporate the saved model into the embedding server. We would like to work this particular problem and 
+and the fine tune model work in further works. 
+
 # Contribution
 
-Shi Qiu: synonyms analyzer, train fine tuned bert.
+Shi Qiu: synonyms analyzer, train fine tuned bert, Incorporate embedding server
 
 Tongkai Zhang: Query Expansion, Merge into ES webapp, User Interface
 
