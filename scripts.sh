@@ -12,6 +12,8 @@ python -m embedding_service.server --embedding sbert_dpr  --model msmarco-robert
 
 python -m embedding_service.server --embedding sbert_dot_product  --model facebook-dpr-ctx_encoder-multiset-base
 
+python -m embedding_service.server --embedding sbert_fine_tune --model sbert_fine_tune
+
 
 # load wapo docs into the index called "wapo_docs_50k"
 python load_es_index.py --index_name wapo_docs_50k --wapo_path pa5_data/subset_wapo_50k_sbert_ft_filtered.jl
