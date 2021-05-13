@@ -7,7 +7,11 @@ python -m embedding_service.server --embedding sbert  --model msmarco-distilbert
 # load sentence BERT embeddings that are trained on nq-distilbert-base-v1
 python -m embedding_service.server --embedding sbert  --model nq-distilbert-base-v1
 # load sentence BERT embeddings that are trained on facebook-dpr-ctx_encoder-multiset-base
-python -m embedding_service.server --embedding sbert  --model facebook-dpr-ctx_encoder-multiset-base
+python -m embedding_service.server --embedding sbert_dpr  --model msmarco-roberta-base-ance-fristp
+
+
+python -m embedding_service.server --embedding sbert_dot_product  --model facebook-dpr-ctx_encoder-multiset-base
+
 
 # load wapo docs into the index called "wapo_docs_50k"
 python load_es_index.py --index_name wapo_docs_50k --wapo_path pa5_data/subset_wapo_50k_sbert_ft_filtered.jl

@@ -128,13 +128,20 @@ def main():
         help="number of workers on the server",
     )
     args = parser.parse_args()
+    def embedding_map(emb):
+        if emb=="fasttext":
+            return INV_PORT_EMBEDDING_MAPPING["fasttext"]
+        elif emb.startswith("sbert"):
+            return INV_PORT_EMBEDDING_MAPPING["sbert"]
     server = Server(
         embedding=args.embedding,
         model=args.model,
         port=INV_PORT_EMBEDDING_MAPPING[args.embedding],
+        # port=embedding_map(args.embedding),
         num_workers=args.num_workers,
     )
     server.start()
+    
 
 
 if __name__ == "__main__":

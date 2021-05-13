@@ -64,7 +64,7 @@ def embedding_reranked(result_list, index_name, vector_name, topic_id, query_typ
 
 def build_embedding_query(result_list, vector_name, topic_id, query_type, customized_query):
     type_mapping = {"title": 0, "description": 1, "narration": 2}
-    vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext"}
+    vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr", "sbert_dot_product_vector": "sbert_dot_product"}
     query_string = parse_wapo_topics(
         "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
     if customized_query:
@@ -88,6 +88,12 @@ def customize_query(query):
     """
     return wordnet_query_expansion(query, 5)
 
+def vector_map(vector_name):
+    if vector_name=="ft_vector":
+        return "ft_vector"
+    elif vector_name.startswith("sbert_"):
+        return "sbert_vector"
+
 
 def generate_script_score_query(query_vector, vector_name):
     """
@@ -99,7 +105,7 @@ def generate_script_score_query(query_vector, vector_name):
     q_script = ScriptScore(
         query={"match_all": {}},  # use a match-all query
         script={  # script your scoring function
-            "source": f"cosineSimilarity(params.query_vector, '{vector_name}') + 1.0",
+            "source": f"cosineSimilarity(params.query_vector, '{vector_map(vector_name)}') + 1.0",
             # add 1.0 to avoid negative score
             "params": {"query_vector": query_vector},
         },
