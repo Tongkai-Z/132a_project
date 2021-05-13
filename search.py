@@ -64,8 +64,8 @@ def embedding_reranked(result_list, index_name, vector_name, topic_id, query_typ
 
 def build_embedding_query(result_list, vector_name, topic_id, query_type, customized_query):
     type_mapping = {"title": 0, "description": 1, "narration": 2}
-    vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext",
-                      "sbert_dpr_vector": "sbert_dpr", "sbert_dot_product_vector": "sbert_dot_product"}
+    vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr",
+                      "sbert_dot_product_vector": "sbert_dot_product", "sbert_fine_tune_vector": "sbert_fine_tune"}
     query_string = parse_wapo_topics(
         "pa5_data/topics2018.xml")[topic_id][type_mapping[query_type]]
     if customized_query:
@@ -209,8 +209,8 @@ def process_interactive_query(topic_id, query_expansion, analyzer, query_type, e
     response = search(INTERACTIVE_INDEX, q_basic, INTERACTIVE_TOP)
     # embedding reranking
     if embedding_type == "ft_vector" or embedding_type.startswith("sbert_"):
-        vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext",
-                          "sbert_dpr_vector": "sbert_dpr", "sbert_dot_product_vector": "sbert_dot_product"}
+        vector_mapping = {"sbert_vector": "sbert", "ft_vector": "fasttext", "sbert_dpr_vector": "sbert_dpr",
+                          "sbert_dot_product_vector": "sbert_dot_product", "sbert_fine_tune_vector": "sbert_fine_tune"}
         result_list = [hit.meta.id for hit in response]
         q_match_ids = Ids(values=result_list)
         encoder = EmbeddingClient(
