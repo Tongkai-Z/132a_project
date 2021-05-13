@@ -27,15 +27,13 @@
     <li><a href="#query-expansion">Query Expansion</a></li>
     <li><a href="#bert-model-selection">Bert Model Selection</a></li>
     <li><a href="#fine-tune-on-bert">Fine Tune on Bert</a></li>
-    <li><a href="#user-interface">User Interface</a></li>
     <li><a href="#">Contributions</a></li>
   </ol>
 </details>
+
 <!-- PROJECT SUMMARY -->
 
 # Project Summary:
-
-![image-20210513160918895](./images/image-20210513160918895.png)
 
 ### Intro
 
@@ -114,11 +112,36 @@ python web.py --run
 
 ### Dependencies
 
-<span style="color:red"> TODO: Add more dependencies list </span>.
-
 - elasticsearch_dsl
+- elasticsearch
+- sentence-transformers
 - pytorch
+- flask
 - numpy
+- zmq
+
+<!-- Pre-Trained Models -->
+
+# Pre-Trained Models
+After trying the default fasttext and sBert models, we decide to check some other pre-trianed models.
+#### - msmarco-distilbert-base-v3
+The default sbert model uses cosine-similarity.
+#### - msmarco-roberta-base-ance-fristp
+It is a model uses dot-product instead of cosine-similarity. Models tuned for cosine-similarity will prefer the retrieval of short documents, while models tuned for dot-product will prefer the retrieval of longer documents.
+#### - facebook-dpr-ctx_encoder-single-nq-base
+It is a model based on Dense Passage Retrieval, which can outperform the traditional sparse retrieval component in open-domain question answering.
+#### - stsb-mpnet-base-v2
+It is a model measures the semantic similarity of two texts.
+
+### Results Table
+NDCG@20 scores for different models:
+| Pre0trained Model | title | description | narration|
+| ---------------------------| ------ | ----------- | --------- |
+| msmarco-distilbert-base-v3 (Default)|0.6275|0.8779|0.6125|
+| msmarco-roberta-base-ance-fristp (Dot-product)|0.4364|0.3826|0.8100|
+|facebook-dpr-ctx_encoder-single-nq-base (Dense Passage Retrieval)|0.8031|0.7382|0.4790|
+|stsb-mpnet-base-v2 (Semantic Textual Similarity)|0.4245|0.4190|0.5164|
+According to the results, the dot-product model performs better when narration is used as query type, and the DPR model performs better with title as query type, the STS model does not perform well in all 3 query types, therefore it will not be used in the following experiments.
 
 <!-- Synonyms Analyzer -->
 
@@ -252,9 +275,22 @@ Based on the characteristics of the False Negative docs' content, we can append 
 
 (`sbert + synonyms_analyzer + query_expansion` , `title`) is improve to (0.844, 0.4)
 
+
 <!-- BERT MODEL SELECTION -->
 
 # Bert model selection
+
+### ndcg@20score/precision for different pre-trained sbert models
+| Query Type                     | Title     | Description  | Narration |
+| ------------------------------ | --------- | ---------- | ----------- |
+| sbert_dot_product                          |0.803/0.20|0.738/0.15|0.479/0.25|
+| sbert_dot_product + qe                     |0.505/0.30|0.420/0.25|0.308/0.15|
+| sbert_dot_product + synonyms_analyzer + qe |0.899/0.40|0.463/0.35|0.390/0.15|
+| sbert_dpr                           |0.436/0.20|0.383/0.15|0.810/0.25|
+| sbert_dpr + qe(query expansion)     |0.569/0.30|0.629/0.25|0.579/0.15|
+| sbert_dpr + synonyms_analyzer + qe  |0.641/0.40|0.674/0.35|0.395/0.15|
+It is obvious that query expansion and synonyms analyzer had improved the accuracy.
+
 
 ### Embeddings
 
@@ -307,57 +343,18 @@ Based on the characteristics of the False Negative docs' content, we can append 
 - When converting the content into vectors, the default config in bert limited the maximum vector length to 512. However,
   most of content string is longer than 512 tokens. Thus, we truncated the vectors to fit in the length. We are not sure if the
   truncation will affect informative level of the vector.
+
 - Due to the limitation of memory in Google Colab, we have to reduce the batch size to a small number. We are not able to test
   if a larger batch size would give us better training results.
+
 - We cannot find a simple approach to directly train the model just for embedding. Thus we converted the base distilled
   bert model into a classification model.
+
 - After we saved the model, we had problem incorporate it with the current embedding server. Thus we cannot test the actual result
   in our evaluation metrics.
-
-# User Interface
-
-This Flask App is aiming for providing the IR researcher with a friendly interface to observe the result of their searching strategies.
-
-## Input Text
-
-![image-20210513161629921](./images/image-20210513161629921.png)
-
-- Topic_ID: topic id is the target id of the topic, it is neccessary for evaluation and query generate based on query type. e.g. title of topic 815
-- Customized Query: when query type is selected as 'input', user can input their own query strings. If the topic title, description or narration is used as query, this box can be left blank.
-
-## Options
-
-![image-20210513161758481](./images/image-20210513161758481.png)
-
-This search options are based on the experiments we made:
-
-- WordNet Query Expansion
-- Synonyms Analyzer
-- Query type
-- Embedding type
-
-## Search Results
-
-The default behavior of this search engine is returning the top 20 results to the user.
-
-- The **false positive** and **false negative** documents is listed for further improvement.
-- The strategy is evaluated by **NCDG@20** and **precision** score, which is also shown at the top of the results list.
-- Strategy summary and query string used for search are displayed to user.
-- Relevance tag is shown for optimization
-- Header
-
-![image-20210513162336907](./images/image-20210513162336907.png)
-
-- False Positive Page
-
-  ![image-20210513162504713](./images/image-20210513162504713.png)
-
-- Result list
-
-  ![image-20210513162745455](./images/image-20210513162745455.png)
 
 # Contribution
 
 Shi Qiu: synonyms analyzer, train fine tuned bert.
-
-Tongkai Zhang: Query Expansion, Merge synonyms analyzer and QE into ES webapp, Developed User Interface
+Tongkai Zhang: Query Expansion, Merge into ES webapp, User Interface
+Bowei Sun: Pre-trained models, load servers
